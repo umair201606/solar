@@ -1,0 +1,41 @@
+@import 'tailwindcss';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+  /* Colors */
+  --color-primary: #d4ff00; /* Neon Lime Green */
+  --color-primary-hover: #bce600;
+  --color-dark-bg: #041a12; /* Deep Forest Green / Almost Black */
+  --color-dark-card: #0a261a;
+  --color-light-bg: #f8faf9;
+  --color-text-main: #111827;
+  --color-text-muted: #6b7280;
+  --color-white: #ffffff;
+}
+
+/* Custom utility for the liquid glass effect if you prefer a class */
+.glass-nav {
+  background: rgba(4, 26, 18, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 255, 0, 0.15);
+}
+
+@keyframes logo-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.logo-marquee-track {
+  animation: logo-marquee 28s linear infinite;
+}
+
+.logo-marquee:hover .logo-marquee-track {
+  animation-play-state: paused;
+}
