@@ -7,7 +7,7 @@ export default function WhoWeAre() {
         {/* Images Side */}
         <div className="relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-xl">
           <img
-            src="https://images.unsplash.com/photo-1509391366360-515432d667c4?w=800"
+            src="https://images.unsplash.com/photo-1613665813446-82a78c468a1d?q=80&w=800"
             alt="Solarkon Solar Installation"
             className="w-full h-full object-cover"
           />

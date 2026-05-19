@@ -9,7 +9,7 @@ export default function Features() {
       <div className="grid items-center gap-16 md:grid-cols-2">
         <div className="relative">
           <img
-            src="https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=800"
+            src="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=800"
             alt="Solarkon solar installation team"
             className="h-[500px] w-full rounded-3xl object-cover"
           />

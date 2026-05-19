@@ -7,7 +7,7 @@ import Testimonials from "../components/projects/Testimonials";
 import CTA from "../components/home/CTA";
 import { getProjectBySlug } from "../data/projectsData";
 
-export default function ProjectDetail({ slug }: { slug: string }) {
+export default function ProjectDetail({ slug }) {
   const project = getProjectBySlug(slug);
 
   if (!project) {

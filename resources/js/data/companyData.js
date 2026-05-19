@@ -95,7 +95,7 @@ export const caseStudies = [
     subtitle: "5 MWp ground-mounted & rooftop",
     title: "Bashir Sons Steel Industry",
     loc: "Kala Shah Kaku | Steel",
-    img: "https://images.unsplash.com/photo-1509391366360-515432d667c4?w=800",
+    img: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=800",
   },
   {
     subtitle: "3.5 MWp across multiple branches",

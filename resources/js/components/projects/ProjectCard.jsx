@@ -1,5 +1,6 @@
 import { Link } from "@inertiajs/react";
 import { Zap } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * ProjectCard
@@ -17,9 +18,49 @@ export default function ProjectCard({
   variant = "light",
 }) {
   const isDark = variant === "dark";
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+    const currentEl = cardRef.current;
+    if (currentEl) {
+      observer.observe(currentEl);
+    }
+    return () => {
+      if (currentEl) {
+        observer.unobserve(currentEl);
+      }
+    };
+  }, []);
+
+  // Premium hardware-accelerated Bezier entrance animation from left
+  const cardStyle = {
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? "translateX(0) scale(1)" : "translateX(-60px) scale(0.97)",
+    transition: "opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1), transform 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
+  };
+
+  // Curved Tag overlay (greenish curve box): slides in from bottom-left with staggered parallax delay
+  const tagOverlayStyle = {
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? "translate(0, 0)" : "translate(-30px, 30px)",
+    transition: "opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1) 200ms, transform 1000ms cubic-bezier(0.16, 1, 0.3, 1) 200ms",
+  };
 
   return (
-    <article className="group flex flex-col w-full">
+    <article
+      ref={cardRef}
+      style={cardStyle}
+      className="group flex flex-col w-full"
+    >
       <div
         className={`relative w-full h-[280px] sm:h-[340px] rounded-[1.75rem] overflow-hidden shadow-xl border-[3px] ${
           isDark ? "border-primary" : "border-[#08100B]"
@@ -33,7 +74,9 @@ export default function ProjectCard({
           />
         </Link>
 
+        {/* The greenish curved div tag overlay, animating on scroll */}
         <div
+          style={tagOverlayStyle}
           className={`absolute bottom-0 left-0 rounded-tr-[1.5rem] px-5 py-3 flex items-center gap-5 z-20 ${
             isDark
               ? "bg-primary text-dark-bg"

@@ -1,7 +1,15 @@
 import { Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 import HeroCards from "./HeroCards";
 
 export default function Hero() {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    // Triggers beautiful smooth hardware-accelerated entrance transitions on page mount
+    setLoaded(true);
+  }, []);
+
   return (
     <>
       {/* 
@@ -16,8 +24,12 @@ export default function Hero() {
         <div className="max-w-7xl mx-auto px-6 md:px-8 relative z-20">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             
-            {/* Left Column: Text & CTA */}
-            <div className="max-w-2xl text-white pt-8 lg:pt-0">
+            {/* Left Column: Text & CTA with Smooth Entrance Animation */}
+            <div 
+              className={`max-w-2xl text-white pt-8 lg:pt-0 transform transition-all duration-1000 ease-out ${
+                loaded ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+              }`}
+            >
               <p className="text-sm md:text-base font-semibold tracking-wide text-white/90 mb-3 uppercase">
                 Nature Produces &amp; We Deliver
               </p>
@@ -36,17 +48,19 @@ export default function Hero() {
               </button>
             </div>
             
-            {/* Right Column: Production-Grade Image */}
-            {/* The design uses a transparent PNG. Since we are using standard JPGs, I placed it inside an elegant, soft-rounded container that matches the clean tech vibe perfectly. */}
-            <div className="relative w-full h-[450px] lg:h-[600px] flex justify-center lg:justify-end items-end pb-8 lg:pb-0">
+            {/* Right Column: Sparkling Solar Panel Image with Entrance Animation & No Blue Mask */}
+            <div 
+              className={`relative w-full h-[450px] lg:h-[600px] flex justify-center lg:justify-end items-end pb-8 lg:pb-0 transform transition-all duration-1000 ease-out delay-200 ${
+                loaded ? "translate-x-0 opacity-100" : "translate-x-12 opacity-0"
+              }`}
+            >
               <div className="relative w-full max-w-[500px] h-[90%] rounded-[2.5rem] rounded-br-[5rem] overflow-hidden shadow-2xl border-4 border-white/20 transform lg:rotate-2 hover:rotate-0 transition-transform duration-700">
                 <img 
-                  src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?q=80&w=1200" 
-                  className="w-full h-full object-cover object-center" 
-                  alt="Solar Engineers Team" 
+                  src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1200" 
+                  className="w-full h-full object-cover object-center animate-[pulse_8s_infinite_alternate]" 
+                  alt="Sparkling Premium Solar Panel Installation" 
                 />
-                {/* Dark gradient overlay at the bottom of the image for depth */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#4D9DE0]/60 via-transparent to-transparent pointer-events-none"></div>
+                {/* No blue gradient masks overlay here so the sparking sunlit panels look fully crisp, natural, and bright! */}
               </div>
             </div>
 

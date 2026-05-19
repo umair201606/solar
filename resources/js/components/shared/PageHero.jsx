@@ -37,15 +37,7 @@ export default function PageHero({ title, breadcrumbs = [] }) {
               linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 18%, rgba(0,0,0,1) 45%)
             `,
             maskComposite: "intersect",
-            mixBlendMode: "luminosity",
-            opacity: 0.75,
-          }}
-        />
-        {/* Blue colour tint so the image reads as part of the sky-blue hero */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: "linear-gradient(to right, rgba(77,157,224,0.25) 0%, rgba(77,157,224,0.15) 50%, transparent 90%)",
+            opacity: 0.9,
           }}
         />
       </div>

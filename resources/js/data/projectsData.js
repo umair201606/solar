@@ -30,7 +30,7 @@ export const projects = [
   },
   {
     slug: "commercial-solutions",
-    img: "https://images.unsplash.com/photo-1611365892502-86f183700b06?w=800",
+    img: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800",
     title: "Commercial Solutions",
     detailTitle: "Commercial Solar Power Systems",
     loc: "Commercial Hubs, Pakistan",
@@ -57,7 +57,7 @@ export const projects = [
   },
   {
     slug: "industrial-solutions",
-    img: "https://images.unsplash.com/photo-1509391366360-515432d667c4?w=800",
+    img: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=800",
     title: "Industrial Solutions",
     detailTitle: "Industrial Solar Installations",
     loc: "Industrial Zones, Pakistan",
