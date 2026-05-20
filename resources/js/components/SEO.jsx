@@ -6,23 +6,23 @@ import { Helmet } from 'react-helmet-async';
  * Props can be overridden per page; defaults target the Home page.
  */
 const SEO = ({
-  title = 'Solarize – Premium Solar Solutions for a Sustainable Future',
-  description = 'Solarize delivers next‑gen solar design, smart storage, and over 12k installations worldwide. Go renewable with award‑winning, premium solar solutions.',
-  keywords = 'premium solar solutions, solar design, solar installation, solar storage, renewable energy, solarize, clean energy, solar projects',
+  title = 'Solarkon – Premium Solar Solutions for a Sustainable Future',
+  description = 'Solarkon delivers next‑gen solar design, smart storage, and premium solar installations for homes, businesses, and agriculture in Pakistan.',
+  keywords = 'premium solar solutions, solar design, solar installation, solar storage, renewable energy, solarkon, clean energy, solar projects, pakistan',
   url = typeof window !== 'undefined' ? window.location.href : '',
-  image = '/assets/og-default.jpg',
+  image = '/brand-logos/android-chrome-512x512.png',
   type = 'website',
 }) => {
   const jsonLD = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Solarize",
+    "name": "Solarkon",
     "url": url,
-    "logo": "/assets/logo.svg",
+    "logo": "/brand-logos/android-chrome-192x192.png",
     "sameAs": [
-      "https://www.facebook.com/solarize",
-      "https://twitter.com/solarize",
-      "https://www.linkedin.com/company/solarize"
+      "https://www.facebook.com/solarkon",
+      "https://twitter.com/solarkon",
+      "https://www.linkedin.com/company/solarkon"
     ]
   };
 

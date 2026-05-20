@@ -40,9 +40,7 @@ export default function Contact() {
       <Reveal animation="fade-right" delay="50ms" slideOffset={60}>
         <Testimonials />
       </Reveal>
-      <Reveal animation="scale-up" delay="50ms">
-        <CTA compact />
-      </Reveal>
+      
     </>
   );
 }

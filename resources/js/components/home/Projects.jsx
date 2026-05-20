@@ -40,8 +40,8 @@ export default function Projects() {
 
           {/* Cards Grid - Increased gap-y to properly space out the floating overlapping pills */}
           <div className="grid md:grid-cols-2 gap-x-12 gap-y-20">
-            {projects.slice(0, 4).map((project) => (
-              <ProjectCard key={project.slug} {...project} variant="dark" />
+            {projects.slice(0, 4).map((project, idx) => (
+              <ProjectCard key={project.slug} {...project} variant="dark" delay={idx * 150} />
             ))}
           </div>
           

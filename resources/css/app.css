@@ -39,3 +39,42 @@
 .logo-marquee:hover .logo-marquee-track {
   animation-play-state: paused;
 }
+
+/* Premium Global Scroll Reveal System */
+.reveal-init {
+  opacity: 0;
+  will-change: transform, opacity;
+  transition-property: transform, opacity, filter;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-fade {
+  transform: scale(0.98);
+  filter: blur(4px);
+}
+
+.reveal-up {
+  transform: translateY(40px);
+}
+
+.reveal-down {
+  transform: translateY(-40px);
+}
+
+.reveal-left {
+  transform: translateX(40px);
+}
+
+.reveal-right {
+  transform: translateX(-40px);
+}
+
+.reveal-scale {
+  transform: scale(0.95);
+}
+
+.reveal-active {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+  filter: blur(0);
+}

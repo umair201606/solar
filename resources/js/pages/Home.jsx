@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <Reveal animation="fade-right" delay="50ms" slideOffset={60}>
+      <Reveal animation="fade-left" delay="60ms" slideOffset={90}>
         <WhoWeAre />
       </Reveal>
       <Services />
