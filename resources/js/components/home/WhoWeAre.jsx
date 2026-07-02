@@ -50,7 +50,7 @@ export default function WhoWeAre() {
                         {/* Image Wrapper */}
                         <div className="flex-1">
                             <img
-                                src="/images/solar-team-install.png"
+                                src="/images/solar-team-install.webp"
                                 alt="Solar Panel Installation"
                                 loading="lazy"
                                 className="w-full h-[240px] sm:h-[300px] lg:h-[369px] object-cover object-center rounded-[25px]"

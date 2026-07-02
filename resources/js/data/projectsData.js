@@ -105,7 +105,7 @@ export const projects = [
   },
   {
     slug: "azaan-flour-mill",
-    img: "/images/solar-panels-closeup.png",
+    img: "/images/solar-panels-closeup.webp",
     title: "Azaan Flour Mill",
     detailTitle: "Azaan Flour Mill Solar Installation",
     loc: "Pakistan",

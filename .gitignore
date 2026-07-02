@@ -4,14 +4,21 @@
 /public/build
 /public/images/filtered_images/
 
-# Videos — originals and optimized (large binary files)
+# Videos — raw original only (optimized video + poster are tracked, needed for deploys)
 /public/heroVideo.mp4
-/public/heroVideo_optimized.mp4
-/public/heroVideo_poster.jpg
 
 # Large raw/source assets not needed in repo
 /public/scene1.webp
 /public/34241.eps
+
+# Original PNGs replaced by compressed .webp versions (webp is tracked)
+/public/images/client-portrait-corporate.png
+/public/images/client-portrait-education.png
+/public/images/client-portrait-healthcare.png
+/public/images/clients.png
+/public/images/solar-farm-aerial.png
+/public/images/solar-panels-closeup.png
+/public/images/solar-team-install.png
 
 # Unused image assets (not referenced anywhere in code)
 /public/imgs/

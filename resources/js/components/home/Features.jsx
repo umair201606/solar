@@ -30,7 +30,7 @@ export default function Features() {
             className="absolute inset-0 will-change-transform"
           >
             <img
-              src="/images/solar-farm-aerial.png"
+              src="/images/solar-farm-aerial.webp"
               alt="Solar farm"
               className="h-full w-full object-cover rounded-[2rem]"
             />
