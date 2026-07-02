@@ -3,8 +3,6 @@ import PageHero from "../components/shared/PageHero";
 import ProjectDetailHeader from "../components/projects/detail/ProjectDetailHeader";
 import ProjectDetailContent from "../components/projects/detail/ProjectDetailContent";
 import OtherProjects from "../components/projects/OtherProjects";
-import Testimonials from "../components/projects/Testimonials";
-import CTA from "../components/home/CTA";
 import { getProjectBySlug } from "../data/projectsData";
 
 export default function ProjectDetail({ slug }) {
@@ -23,19 +21,10 @@ export default function ProjectDetail({ slug }) {
 
   return (
     <>
-      <PageHero
-        title="Project Detail"
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Projects", href: "/projects" },
-          { label: project.title },
-        ]}
-      />
+      <PageHero title="Project Detail" />
       <ProjectDetailHeader project={project} />
       <ProjectDetailContent project={project} />
       <OtherProjects currentSlug={project.slug} />
-      <Testimonials />
-      <CTA compact />
     </>
   );
 }

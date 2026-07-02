@@ -1,6 +1,10 @@
+import useScrollAnimation from '../../lib/useScrollAnimation';
+
 export default function CTA({ compact = false }) {
+  const [sectionRef, isVisible] = useScrollAnimation();
+
   return (
-    <section className={compact ? "py-10 px-6" : "py-20 px-6"}>
+    <section className={compact ? "py-10 px-6" : "py-20 px-6 overflow-hidden"}>
       <div
         className={`max-w-7xl mx-auto bg-dark-bg flex flex-col md:flex-row justify-between gap-8 relative overflow-hidden ${
           compact
@@ -8,10 +12,11 @@ export default function CTA({ compact = false }) {
             : "rounded-[3rem] p-12 md:p-16 items-center"
         }`}
       >
-        <div className="absolute right-0 top-0 w-1/2 h-full bg-[url('https://images.unsplash.com/photo-1509391366360-515432d667c4?w=800')] opacity-20 object-cover mix-blend-overlay pointer-events-none" />
+        <div className="absolute right-0 top-0 w-1/2 h-full bg-[url('/images/vibrant_images/DJI_0281.webp')] bg-cover opacity-20 mix-blend-overlay pointer-events-none" />
 
         <div
-          className={`max-w-lg relative z-10 ${compact ? "md:max-w-md" : ""} mb-0`}
+          ref={sectionRef}
+          className={`max-w-lg relative z-10 ${compact ? "md:max-w-md" : ""} mb-0 overflow-hidden`}
         >
           <span className="border border-gray-600 rounded-full px-4 py-1 text-xs text-primary">
             Powered by Trust and Results
@@ -20,13 +25,13 @@ export default function CTA({ compact = false }) {
             className={`font-bold text-white leading-tight ${
               compact
                 ? "text-2xl md:text-3xl mt-4 mb-3"
-                : "text-4xl md:text-5xl mt-6 mb-6"
+                : `text-4xl md:text-5xl mt-6 mb-6 ${isVisible ? 'slide-from-left' : 'slide-from-left-init'}`
             }`}
           >
             Ready to switch to solar? Let's start the journey.
           </h2>
           <p
-            className={`text-gray-300 text-sm ${compact ? "mb-5 max-w-sm" : "mb-8"}`}
+            className={`text-gray-300 text-sm ${compact ? "mb-5 max-w-sm" : `mb-8 ${isVisible ? 'animate-fade-in-up-delay-1' : 'animate-fade-in-up-init'}`}`}
           >
             With <strong className="text-white">Solarkon</strong>, solar isn't
             complicated. It's reliable, intelligent, and built to perform.

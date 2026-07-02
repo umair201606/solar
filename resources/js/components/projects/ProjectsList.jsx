@@ -11,10 +11,10 @@ export default function ProjectsList() {
           <span className="inline-block border border-gray-300 rounded-full px-4 py-1.5 text-sm text-gray-500 font-medium mb-6">
             Our Projects
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-[#08100B] leading-tight max-w-2xl mb-5 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[#08100B] leading-tight max-w-2xl mb-5 tracking-tight slide-from-left">
             Energizing Communities Through Innovation
           </h2>
-          <p className="max-w-3xl text-base leading-relaxed text-gray-500">
+          <p className="max-w-3xl text-base leading-relaxed text-gray-500 animate-fade-in-up-delay-1">
             <strong className="font-bold text-[#08100B]">Solarkon</strong> has
             successfully executed 700+ solar installations across Pakistan. Our
             portfolio includes rooftop systems, ground-mounted plants, and hybrid

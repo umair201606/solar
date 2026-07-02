@@ -1,3 +1,5 @@
+import { siteImages } from "./siteImages";
+
 export const company = {
   name: "Solarkon Private Limited",
   shortName: "Solarkon",
@@ -70,7 +72,7 @@ export const whyChooseSolarkon = [
 export const serviceOfferings = [
   {
     title: "Residential Solutions",
-    desc: "Lowering electricity costs with top-tier solutions for Pakistani communities—home solar power systems tailored to your needs.",
+    desc: "Lowering electricity costs with top-tier solutions for Pakistani community homes solar power systems tailored to your needs.",
     dark: false,
   },
   {
@@ -80,7 +82,7 @@ export const serviceOfferings = [
   },
   {
     title: "Industrial Solutions",
-    desc: "High-capacity systems for factories and warehouses—stable energy and operational savings without compromising performance.",
+    desc: "High-capacity systems for factories and warehouses stable energy and operational savings without compromising performance.",
     dark: false,
   },
   {
@@ -92,28 +94,28 @@ export const serviceOfferings = [
 
 export const caseStudies = [
   {
+    subtitle: "10 MWp ongoing expansion — Phase 2",
+    title: "Bashir Sons Steel Industry",
+    loc: "Kala Shah Kaku | Ongoing",
+    img: "/images/vibrant_images/ongoingB.webp",
+  },
+  {
     subtitle: "5 MWp ground-mounted & rooftop",
     title: "Bashir Sons Steel Industry",
-    loc: "Kala Shah Kaku | Steel",
-    img: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=800",
+    loc: "Kala Shah Kaku | Completed",
+    img: "/images/vibrant_images/bashirsons1.webp",
   },
   {
     subtitle: "3.5 MWp across multiple branches",
     title: "Gourmet Bakeries",
-    loc: "Multiple Branches | Food Industry",
-    img: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=800",
+    loc: "Multiple Branches | Completed",
+    img: "/images/vibrant_images/gourmet.webp",
   },
   {
-    subtitle: "500 KWp across multiple branches",
-    title: "Lahore Grammar School",
-    loc: "Multiple Branches | Education",
-    img: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800",
-  },
-  {
-    subtitle: "300 KWp industrial installation",
-    title: "Bloom Pharma",
-    loc: "Hattar Industries | Pharmaceuticals",
-    img: "https://images.unsplash.com/photo-1592833159155-c62df1b65634?w=800",
+    subtitle: "1.2 MWp food processing facility",
+    title: "Hajvery Foods",
+    loc: "Daska, Sialkot | Completed",
+    img: "/images/vibrant_images/hajvery.webp",
   },
 ];
 

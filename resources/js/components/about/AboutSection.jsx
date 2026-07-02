@@ -1,4 +1,5 @@
 import { ShieldCheck, MessageCircle, Heart } from "lucide-react";
+import { siteImages } from "../../data/siteImages";
 
 export default function AboutSection() {
   const features = [
@@ -26,8 +27,8 @@ export default function AboutSection() {
         <div className="relative">
           <div className="rounded-3xl overflow-hidden shadow-2xl relative z-10 border-[6px] border-white">
             <img 
-              src="https://images.unsplash.com/photo-1509391366360-515432d667c4?q=80&w=1200" 
-              alt="Solar panels at sunset" 
+              src={siteImages.fieldSunset} 
+              alt="Solar field at sunset across Pakistan" 
               className="w-full h-[500px] object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
@@ -45,12 +46,12 @@ export default function AboutSection() {
         {/* Text Side */}
         <div className="flex flex-col gap-6 lg:pl-10 mt-16 lg:mt-0">
           <div>
-            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Our Story</span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-dark-bg leading-tight mb-6">
+            <span className="text-dark-bg bg-primary font-bold tracking-widest uppercase text-sm mb-2 ">Our Story</span>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-dark-bg leading-tight mb-6 slide-from-left">
               Powering a Brighter, <br />
               Greener Pakistan
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed mb-4">
+            <p className="text-gray-600 text-lg leading-relaxed mb-4 animate-fade-in-up-delay-1">
               <strong className="text-dark-bg">Solarkon Private Limited</strong> is the leading solar energy provider in Pakistan, offering top-of-the-line products and services that can be tailored to meet your individual needs.
             </p>
             <p className="text-gray-600 text-lg leading-relaxed mb-8">

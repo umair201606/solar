@@ -10,27 +10,27 @@ export default function ProjectDetailHeader({ project }) {
         </span>
       </h1>
 
-      <div className="relative border-4 border-dark-card rounded-[2rem] overflow-hidden">
-        <img
-          src={project.img}
-          alt={project.title}
-          className="w-full h-[400px] md:h-[480px] object-cover"
-        />
-        <div className="absolute bottom-0 left-0 bg-dark-card text-white px-6 py-4 rounded-tr-3xl flex flex-wrap gap-5 text-sm font-medium border-t-4 border-r-4 border-white">
-          {project.tags.map((tag) => (
-            <div key={tag.text} className="flex items-center gap-2">
-              <span className="text-primary">
-                <tag.icon className="w-4 h-4" />
-              </span>
-              <span>{tag.text}</span>
+        <div className="relative border border-white/20 rounded-[2rem] overflow-hidden shadow-xl">
+          <img
+            src={project.img}
+            alt={project.title}
+            className="w-full h-[400px] md:h-[480px] object-cover"
+          />
+          <div className="absolute bottom-0 left-0 backdrop-blur-xl bg-white/5 text-white px-6 py-4 rounded-tr-3xl flex flex-wrap gap-5 text-sm font-medium border-t border-r border-white/10">
+            {project.tags.map((tag) => (
+              <div key={tag.text} className="flex items-center gap-2">
+                <span className="text-[#D4F64D]">
+                  <tag.icon className="w-4 h-4" />
+                </span>
+                <span>{tag.text}</span>
+              </div>
+            ))}
+            <div className="flex items-center gap-2 border-l border-white/20 pl-5">
+              <Calendar className="w-4 h-4 text-[#D4F64D]" />
+              <span>Completion: {project.completionDate}</span>
             </div>
-          ))}
-          <div className="flex items-center gap-2 border-l border-gray-600 pl-5">
-            <Calendar className="w-4 h-4 text-primary" />
-            <span>Completion: {project.completionDate}</span>
           </div>
         </div>
-      </div>
     </section>
   );
 }

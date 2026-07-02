@@ -3,8 +3,8 @@ import { Zap } from "lucide-react";
 export default function ContactForm() {
   return (
     <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
-      <h2 className="text-2xl font-bold text-dark-bg mb-2">Send Us a Message</h2>
-      <p className="text-gray-600 text-sm mb-6">
+      <h2 className="text-2xl font-bold text-dark-bg mb-2 slide-from-left">Send Us a Message</h2>
+      <p className="text-gray-600 text-sm mb-6 animate-fade-in-up-delay-1">
         Fill out the form and our team will get back to you within 24 hours.
       </p>
       <form className="space-y-4">

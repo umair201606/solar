@@ -5,13 +5,7 @@ import Reveal from "../components/shared/Reveal";
 export default function Store() {
   return (
     <>
-      <PageHero
-        title="Store"
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Store" },
-        ]}
-      />
+      <PageHero title="Store" />
       <Reveal animation="fade-up" delay="50ms" slideOffset={60}>
         <StoreSection />
       </Reveal>

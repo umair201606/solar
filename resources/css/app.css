@@ -5,14 +5,26 @@
 
 @theme {
   /* Colors */
-  --color-primary: #d4ff00; /* Neon Lime Green */
+  --color-primary: #d4ff00;
+  /* Neon Lime Green */
   --color-primary-hover: #bce600;
-  --color-dark-bg: #041a12; /* Deep Forest Green / Almost Black */
+  --color-dark-bg: #041a12;
+  /* Deep Forest Green / Almost Black */
   --color-dark-card: #0a261a;
   --color-light-bg: #f8faf9;
   --color-text-main: #111827;
   --color-text-muted: #6b7280;
   --color-white: #ffffff;
+
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
 }
 
 /* Custom utility for the liquid glass effect if you prefer a class */
@@ -27,6 +39,7 @@
   from {
     transform: translateX(0);
   }
+
   to {
     transform: translateX(-50%);
   }
@@ -78,3 +91,72 @@
   transform: translate(0, 0) scale(1);
   filter: blur(0);
 }
+
+@keyframes slide-from-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.slide-from-left {
+  animation: slide-from-left 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.slide-from-left-init {
+  transform: translateX(-100%);
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-up-delay-1 {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-up-delay-2 {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-up-delay-3 {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-up-init {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes draw-border {
+  to { stroke-dashoffset: 0; }
+}
+
+.draw-border-rect-init {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.draw-border-rect {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-border 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+

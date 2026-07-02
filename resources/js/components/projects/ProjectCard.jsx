@@ -42,102 +42,88 @@ export default function ProjectCard({
     };
   }, []);
 
-  // Premium hardware-accelerated Bezier entrance animation from left
   const cardStyle = {
     opacity: isVisible ? 1 : 0,
     transform: isVisible ? "translateX(0) scale(1)" : "translateX(-60px) scale(0.97)",
     transition: `opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 1000ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
   };
 
-  return (
-    <article
-      ref={cardRef}
-      style={cardStyle}
-      className="group flex flex-col w-full"
-    >
-      {/* 3px Neon Green Border Image Container with Integrated Tag Strip */}
-      <div
-        className="relative w-full rounded-[1.75rem] overflow-hidden shadow-xl border-[3px] border-[#D4F64D] bg-[#D4F64D] flex flex-col transition-transform duration-500 group-hover:scale-[1.01]"
-      >
-        {/* Project Image */}
-        <div className="relative w-full h-[220px] sm:h-[280px] overflow-hidden">
-          <Link href={`/projects/${slug}`} className="block w-full h-full">
-            <img
-              src={img}
-              alt={title}
-              className="w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-            />
-          </Link>
-        </div>
+  const tagOverlayStyle = {
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? "translate(0, 0)" : "translate(-30px, 30px)",
+    transition: `opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1) 200ms, transform 1000ms cubic-bezier(0.16, 1, 0.3, 1) ${delay + 200}ms`,
+  };
 
-        {/* Tag Strip - Merged perfectly inside the neon-green bottom section of the container */}
-        <div className="bg-[#D4F64D] text-[#08100B] px-5 py-3 flex flex-wrap items-center justify-start gap-x-5 gap-y-1.5 text-xs sm:text-[13px] font-extrabold select-none border-t-[3px] border-[#D4F64D]">
+  return (
+    <article ref={cardRef} style={cardStyle} className="group flex w-full flex-col">
+      <div
+        className={`relative h-[280px] w-full overflow-hidden rounded-[1.75rem] border-[3px] shadow-xl sm:h-[340px] ${
+          isDark ? "border-[#D4F64D]" : "border-[#08100B]"
+        }`}
+      >
+        <Link href={`/projects/${slug}`} className="block h-full w-full">
+          <img
+            src={img}
+            alt={title}
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          />
+        </Link>
+
+        <div
+          style={tagOverlayStyle}
+          className={`absolute bottom-0 left-0 z-20 flex items-center gap-5 rounded-tr-[1.5rem] px-5 py-3 ${
+            isDark ? "bg-[#D4F64D] text-[#08100B]" : "bg-[#08100B] text-white"
+          }`}
+        >
           {tags.map((tag, idx) => {
             const Icon = tag.icon;
             return (
-              <div
-                key={idx}
-                className="flex items-center gap-1.5 whitespace-nowrap text-[#08100B]"
-              >
+              <div key={idx} className="flex items-center gap-1.5 whitespace-nowrap text-xs font-semibold sm:text-sm">
                 {Icon && (
                   <Icon
-                    className="w-4 h-4 stroke-[2.8] text-[#08100B] flex-shrink-0"
+                    className={`h-4 w-4 shrink-0 stroke-[2.5] ${
+                      isDark ? "text-[#08100B]" : "text-[#D4F64D]"
+                    }`}
                   />
                 )}
-                <span>
-                  {tag.text}
-                </span>
+                <span className={isDark ? "font-bold text-[#08100B]" : "text-white/90"}>{tag.text}</span>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Description & Button Block */}
-      <div className="pt-5 px-1 flex flex-col">
-        {/* Title & Location Line exactly as reference: Title | Location: Loc */}
-        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mb-2.5 font-extrabold text-xl sm:text-2xl tracking-tight leading-tight">
+      <div className="flex flex-col px-1 pt-7">
+        <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <Link href={`/projects/${slug}`}>
-            <span
-              className={`transition-colors duration-300 ${
-                isDark
-                  ? "text-white hover:text-primary"
-                  : "text-[#08100B] hover:text-[#1a6e3a]"
+            <h3
+              className={`text-2xl font-extrabold leading-tight tracking-tight transition-colors duration-300 sm:text-[1.75rem] ${
+                isDark ? "text-white hover:text-[#D4F64D]" : "text-[#08100B] hover:text-[#1a6e3a]"
               }`}
             >
               {title}
-            </span>
+            </h3>
           </Link>
-          <span
-            className={`text-sm font-light ${isDark ? "text-gray-400" : "text-gray-300"}`}
-          >
-            |
-          </span>
-          <span
-            className="text-[#D4F64D] text-xs sm:text-sm font-extrabold uppercase tracking-wide bg-[#D4F64D]/10 px-2 py-0.5 rounded"
-          >
+          <span className={`text-sm font-light ${isDark ? "text-[#D4F64D]/60" : "text-gray-400"}`}>|</span>
+          <span className={`text-sm font-medium ${isDark ? "text-[#D4F64D]" : "text-gray-500"}`}>
             Location: {loc}
           </span>
         </div>
 
-        <p
-          className={`text-[15px] leading-relaxed mb-4 font-light ${
-            isDark ? "text-gray-300" : "text-gray-600"
-          }`}
-        >
+        <p className={`mb-6 max-w-[95%] text-[15px] leading-relaxed ${isDark ? "text-gray-400" : "text-gray-600"}`}>
           {desc}
         </p>
 
-        {/* More Detail Lightning Pill Button */}
         <Link
           href={`/projects/${slug}`}
-          className={`px-5 py-2.5 rounded-full font-extrabold text-xs sm:text-sm flex items-center gap-1 w-fit hover:scale-105 transition-all duration-300 shadow-md ${
+          className={`inline-flex w-fit items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 ${
             isDark
-              ? "bg-[#D4F64D] text-[#08100B] hover:bg-white"
-              : "bg-[#08100B] text-[#D4F64D] hover:bg-[#D4F64D] hover:text-[#08100B]"
+              ? "bg-[#D4F64D] text-[#08100B] shadow-lg shadow-[#D4F64D]/20 hover:bg-[#E6FF7A]"
+              : "bg-[#08100B] text-[#D4F64D] shadow-md hover:bg-[#0f2010]"
           }`}
         >
-          More Detail <Zap className="w-3.5 h-3.5 fill-current" />
+          More Detail
+          <Zap className={`h-4 w-4 stroke-none transition-transform ${isDark ? "fill-[#08100B]" : "fill-[#D4F64D]"}`} />
         </Link>
       </div>
     </article>

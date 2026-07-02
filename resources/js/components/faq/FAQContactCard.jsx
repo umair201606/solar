@@ -1,22 +1,24 @@
 import { Link } from "@inertiajs/react";
 import { Zap, MapPin, Phone, Mail } from "lucide-react";
 import { company } from "../../data/companyData";
+import { siteImages } from "../../data/siteImages";
 
 export default function FAQContactCard() {
   return (
     <div className="relative sticky top-28 h-fit overflow-hidden rounded-3xl bg-dark-card p-8 text-white">
       <div
-        className="pointer-events-none absolute bottom-0 right-0 h-48 w-48 bg-[url('https://images.unsplash.com/photo-1509391366360-515432d667c4?w=400')] bg-cover bg-center opacity-10"
+        className="pointer-events-none absolute bottom-0 right-0 h-48 w-48 bg-cover bg-center opacity-10"
+        style={{ backgroundImage: `url('${siteImages.panelsCloseup}')` }}
         aria-hidden
       />
 
       <span className="rounded-full border border-primary px-4 py-1 text-xs text-primary">
         Have Any Other Question?
       </span>
-      <h3 className="relative z-10 mt-4 mb-3 text-2xl font-bold">
+      <h3 className="relative z-10 mt-4 mb-3 text-2xl font-bold slide-from-left">
         Reach Out, We&apos;re Always Listening
       </h3>
-      <p className="relative z-10 mb-8 text-sm text-gray-300">
+      <p className="relative z-10 mb-8 text-sm text-gray-300 animate-fade-in-up-delay-1">
         Our 24/7 help line ensures clients can reach us anytime for urgent support.
       </p>
 

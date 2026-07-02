@@ -12,10 +12,10 @@ export default function StoreSection() {
         <span className="rounded-full border border-gray-300 px-4 py-1 text-sm text-gray-600">
           Our Products
         </span>
-        <h2 className="mt-6 mb-4 max-w-2xl text-4xl font-bold leading-tight text-dark-bg md:text-5xl">
+        <h2 className="mt-6 mb-4 max-w-2xl text-4xl font-bold leading-tight text-dark-bg md:text-5xl slide-from-left">
           Working Methodology &amp; Product Range
         </h2>
-        <p className="max-w-2xl text-sm text-gray-600">
+        <p className="max-w-2xl text-sm text-gray-600 animate-fade-in-up-delay-1">
           We offer PV solar panels, off-grid, on-grid, and hybrid inverters—high-quality
           goods and services that meet or surpass customer expectations across Pakistan.
         </p>
@@ -46,27 +46,7 @@ export default function StoreSection() {
           ))}
       </div>
 
-      <div className="bg-primary/15 border border-primary/25 rounded-[2rem] p-10 md:p-12 grid md:grid-cols-2 gap-8 items-center">
-        <div>
-          <h3 className="text-2xl font-bold text-dark-bg mb-3">
-            Global Panel Pricing Trends
-          </h3>
-          <p className="text-gray-600 text-sm">
-            Average tier-1 module prices have stabilized with modest upward pressure
-            on high-efficiency panels. Solarkon tracks wholesale movements so your
-            quotes stay competitive.
-          </p>
-        </div>
-        <div className="h-32 bg-white/60 rounded-2xl flex items-end gap-2 px-4 pb-4">
-          {[40, 55, 45, 70, 60, 85, 75, 90].map((h, i) => (
-            <div
-              key={i}
-              className="flex-1 bg-primary rounded-t min-h-[8px]"
-              style={{ height: `${h}%` }}
-            />
-          ))}
-        </div>
-      </div>
+      
 
       <div className="mt-10 bg-dark-card rounded-[2rem] p-8 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6">
         <div>

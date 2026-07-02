@@ -9,10 +9,10 @@ export default function FAQSection() {
           <span className="border border-gray-300 rounded-full px-4 py-1 text-sm text-gray-600">
             FAQ
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold mt-6 mb-4 text-dark-bg leading-tight">
+          <h2 className="text-4xl md:text-5xl font-bold mt-6 mb-4 text-dark-bg leading-tight slide-from-left">
             Everything You Need to Know
           </h2>
-          <p className="text-gray-600 text-sm mb-10 max-w-xl">
+          <p className="text-gray-600 text-sm mb-10 max-w-xl animate-fade-in-up-delay-1">
             From technology to timelines, find all the key answers in one simple place.
           </p>
           <FAQAccordion />

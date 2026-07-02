@@ -1,25 +1,27 @@
+import { useEffect, useRef, useState } from "react";
 import { Zap } from "lucide-react";
 import BlogCard from "./BlogCard";
 import Reveal from "../shared/Reveal";
+import useScrollAnimation from '../../lib/useScrollAnimation';
 
 const posts = [
   {
     title: "Off-Grid vs Hybrid vs On-Grid: Which System Is Right for You?",
-    img: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=600",
+    img: "/images/vibrant_images/inverter1.webp",
     category: "Solar Guide",
     date: "May 20, 2026",
     readTime: "5 min read",
   },
   {
     title: "Flexible Financing Options for Solar in Pakistan",
-    img: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600",
+    img: "/images/vibrant_images/solarkon.webp",
     category: "Finance Tips",
     date: "May 18, 2026",
     readTime: "4 min read",
   },
   {
     title: "700+ Installations: Sectors We Serve Across Pakistan",
-    img: "https://images.unsplash.com/photo-1592833159155-c62df1b65634?w=600",
+    img: "/images/vibrant_images/team2.webp",
     category: "Sectors Served",
     date: "May 15, 2026",
     readTime: "6 min read",
@@ -27,24 +29,62 @@ const posts = [
 ];
 
 export default function Blog() {
+  const [sectionRef, isVisible] = useScrollAnimation();
+  const pillRef = useRef(null);
+  const [pillRadius, setPillRadius] = useState(16);
+
+  useEffect(() => {
+    if (!pillRef.current) return;
+    const el = pillRef.current;
+    const update = () => setPillRadius(el.offsetHeight / 2);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <section className="py-24 max-w-7xl mx-auto px-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
-        <div>
-          <span className="border border-gray-300 rounded-full px-4 py-1.5 text-xs font-bold tracking-wide text-gray-500 uppercase">
-            Solarkon Blog
-          </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold mt-6 mb-4 text-dark-bg tracking-tight leading-tight">
+    <section className="py-24 max-w-7xl mx-auto px-6 overflow-hidden">
+      <div ref={sectionRef} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 overflow-hidden">
+        <div className="overflow-hidden">
+          <div ref={pillRef} className="relative w-max mb-2 inline-block">
+            <svg
+              className="absolute inset-0 w-full h-full overflow-visible pointer-events-none"
+              aria-hidden="true"
+            >
+              <rect
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                rx={pillRadius}
+                ry={pillRadius}
+                fill="none"
+                stroke="#1f2937"
+                strokeWidth="1"
+                pathLength="1"
+                className={isVisible ? 'draw-border-rect' : 'draw-border-rect-init'}
+              />
+            </svg>
+            <span className="relative block px-5 py-1.5 text-gray-800 text-sm font-medium tracking-wide uppercase">
+              Solarkon Blog
+            </span>
+          </div>
+          <h2
+            className={`text-4xl md:text-5xl font-extrabold mt-6 mb-4 text-dark-bg tracking-tight leading-tight ${isVisible ? 'slide-from-left' : 'slide-from-left-init'}`}
+          >
             Green Insights, Real Impact
           </h2>
-          <p className="text-gray-600 max-w-xl font-light text-base md:text-lg">
+          <p
+            className={`text-gray-600 max-w-xl font-light text-base md:text-lg ${isVisible ? 'animate-fade-in-up-delay-1' : 'animate-fade-in-up-init'}`}
+          >
             Explore how <strong className="text-dark-bg">Solarkon</strong>{" "}
             transforms industries, communities, and the planet. One story at a
             time.
           </p>
         </div>
-        <button className="bg-primary text-dark-bg px-7 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-white hover:text-dark-bg hover:scale-105 transition shadow-lg shrink-0">
-          Read More <Zap className="w-4 h-4 fill-current" />
+        <button className="bg-[#d4ff00] text-[#041a12] px-8 py-4 rounded-full font-bold flex items-center gap-2 hover:bg-[#041a12] hover:text-white transition-colors shrink-0 shadow-lg">
+          Read More <Zap className="w-5 h-5 fill-current" />
         </button>
       </div>
 

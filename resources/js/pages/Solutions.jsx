@@ -9,18 +9,15 @@ const icons = [Zap, ShieldCheck, PieChart];
 export default function Solutions() {
   return (
     <>
-      <PageHero
-        title="Energy Solutions"
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Solutions" }]}
-      />
+      <PageHero title="Energy Solutions" />
 
       <Reveal animation="fade-left" delay="50ms" slideOffset={60}>
         <section className="mx-auto max-w-7xl px-6 py-20">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-dark-bg">
+            <h2 className="mb-4 text-4xl font-bold text-dark-bg slide-from-left">
               Flexible Financing &amp; Energy Options
             </h2>
-            <p className="mx-auto max-w-2xl text-gray-600">
+            <p className="mx-auto max-w-2xl text-gray-600 animate-fade-in-up-delay-1">
               As the best solar energy company in Pakistan, we are dedicated to giving
               customers high-quality goods and services that meet or surpass their
               expectations.

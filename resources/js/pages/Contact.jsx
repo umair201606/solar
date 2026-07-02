@@ -7,13 +7,7 @@ import Reveal from "../components/shared/Reveal";
 export default function Contact() {
   return (
     <>
-      <PageHero
-        title="Contact"
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Contact" },
-        ]}
-      />
+      <PageHero title="Contact" />
       <Reveal animation="fade-right" delay="50ms" slideOffset={60}>
         <ContactSection />
       </Reveal>
