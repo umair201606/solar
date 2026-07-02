@@ -3,7 +3,9 @@ import Navbar from '../Navbar';
 import HeroCards from './HeroCards';
 
 export default function HeroSection() {
-    const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+    const [isDesktop, setIsDesktop] = useState(
+        () => typeof window !== 'undefined' && window.innerWidth >= 1024,
+    );
 
     useEffect(() => {
         const checkSize = () => setIsDesktop(window.innerWidth >= 1024);

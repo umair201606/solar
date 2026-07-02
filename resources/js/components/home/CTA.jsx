@@ -12,7 +12,7 @@ export default function CTA({ compact = false }) {
             : "rounded-[3rem] p-12 md:p-16 items-center"
         }`}
       >
-        <div className="absolute right-0 top-0 w-1/2 h-full bg-[url('/images/vibrant_images/DJI_0281.webp')] bg-cover opacity-20 mix-blend-overlay pointer-events-none" />
+        <div className="absolute right-0 top-0 w-1/2 h-full bg-[url('/background.webp')] bg-cover opacity-20 mix-blend-overlay pointer-events-none" />
 
         <div
           ref={sectionRef}
