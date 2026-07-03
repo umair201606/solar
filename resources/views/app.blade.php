@@ -17,8 +17,8 @@
         @fonts
 
         @viteReactRefresh
-<!-- Change .tsx to .jsx at the end -->
-@vite(['resources/css/app.css', 'resources/js/app.jsx', "resources/js/pages/{$page['component']}.jsx"])        <x-inertia::head>
+        @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+        <x-inertia::head>
             <title>{{ config('app.name', 'Solarkon') }}</title>
         </x-inertia::head>
     </head>
