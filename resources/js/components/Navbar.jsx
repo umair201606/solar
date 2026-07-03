@@ -49,7 +49,7 @@ export default function Navbar() {
                     </div>
 
                     <nav
-                        className="hidden items-center gap-6 xl:flex xl:gap-9"
+                        className="hidden items-center gap-6 lg:flex lg:gap-9"
                         aria-label="Primary navigation"
                     >
                         {links.map((item) => (
@@ -64,7 +64,7 @@ export default function Navbar() {
                     </nav>
 
                     <div className="flex items-center gap-3">
-                        <div className="relative hidden xl:inline-flex group items-center justify-center rounded-full p-[2px] overflow-hidden shadow-[0_0_20px_rgba(212,246,77,0.25)] transition-shadow hover:shadow-[0_0_30px_rgba(212,246,77,0.45)]">
+                        <div className="relative hidden lg:inline-flex group items-center justify-center rounded-full p-[2px] overflow-hidden shadow-[0_0_20px_rgba(212,246,77,0.25)] transition-shadow hover:shadow-[0_0_30px_rgba(212,246,77,0.45)]">
                             <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,#10B981_30%,#D4F64D_50%,transparent_70%)] opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
                             <Link
                                 href="/contact"
@@ -76,7 +76,7 @@ export default function Navbar() {
 
                         <button
                             type="button"
-                            className="inline-flex size-11 items-center justify-center rounded-xl border border-white/30 text-white transition-all hover:bg-white/10 active:scale-95 xl:hidden"
+                            className="inline-flex size-11 items-center justify-center rounded-xl border border-white/30 text-white transition-all hover:bg-white/10 active:scale-95 lg:hidden"
                             aria-expanded={open}
                             aria-controls="mobile-nav"
                             aria-label={open ? 'Close menu' : 'Open menu'}
@@ -108,7 +108,7 @@ export default function Navbar() {
             </header>
 
             {open && createPortal(
-                <div className="fixed inset-0 z-[100] xl:hidden">
+                <div className="fixed inset-0 z-[100] lg:hidden">
                     <div
                         className="absolute inset-0 bg-[#08100B]/60 backdrop-blur-md"
                         onClick={() => setOpen(false)}

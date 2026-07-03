@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import useScrollAnimation from '../../lib/useScrollAnimation';
 
 export default function WhoWeAre() {
@@ -39,9 +40,9 @@ export default function WhoWeAre() {
                         </div>
 
                         <div className="flex items-start sm:items-center lg:items-end">
-                            <button className="bg-[#c6f321] px-[31px] py-[10px] rounded-full text-[16px] sm:text-[18px] font-semibold whitespace-nowrap">
+                            <Link href="/about" className="bg-[#c6f321] px-[31px] py-[10px] rounded-full text-[16px] sm:text-[18px] font-semibold whitespace-nowrap hover:bg-[#b8e01e] transition-colors">
                                 Get to Know Us ⚡
-                            </button>
+                            </Link>
                         </div>
                     </div>
 

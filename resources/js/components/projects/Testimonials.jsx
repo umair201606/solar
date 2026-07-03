@@ -23,7 +23,7 @@ export default function Testimonials() {
           </h2>
           
           <p className="text-gray-600 text-[17px] leading-relaxed mb-12 pr-4">
-            Every <strong className="text-black font-bold">Solarize</strong> customer experience reflects the trust and quality behind our services. Their voices aren't just validation, they're a guiding force for our continued innovation in clean energy.
+            Every <strong className="text-black font-bold">Solarkon</strong> customer experience reflects the trust and quality behind our services. Their voices aren't just validation, they're a guiding force for our continued innovation in clean energy.
           </p>
 
           <div className="relative pt-2 pl-2 mt-4 group mb-10">
