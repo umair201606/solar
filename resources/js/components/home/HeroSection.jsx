@@ -26,7 +26,7 @@ export default function HeroSection() {
                     
                     {/* Background Mask & Static Hero Image */}
                     <div
-                        className="absolute inset-0 z-0 overflow-hidden bg-[#0a2316] max-lg:[mask-image:none]"
+                        className="absolute inset-0 z-0 overflow-hidden bg-[#0a2316] max-lg:![mask-image:none]"
                         style={maskStyle}
                     >
                         <img
