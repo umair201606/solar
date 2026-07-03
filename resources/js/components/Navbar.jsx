@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const LOGO = '/brand-logos/android-chrome-192x192.png';
@@ -16,6 +16,10 @@ const links = [
 export default function Navbar() {
     const { url } = usePage();
     const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        setOpen(false);
+    }, [url]);
 
     const linkClass = (path) =>
         url === path

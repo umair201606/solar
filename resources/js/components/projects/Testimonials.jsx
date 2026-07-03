@@ -9,7 +9,7 @@ export default function Testimonials() {
         
         {/* Left: Standard Image */}
         <div className="relative w-full h-[650px] rounded-[2.5rem] overflow-hidden drop-shadow-xl">
-          <img src="/images/vibrant_images/bashirsons1.webp" alt="Team" className="w-full h-full object-cover" />
+          <img src="/images/solar-team-install.webp" alt="Team" className="w-full h-full object-cover" />
         </div>
 
         {/* Right: Content & Testimonial Card */}
@@ -47,13 +47,13 @@ export default function Testimonials() {
             
             <div className="relative z-10 pl-[110px] pt-[64px] pr-8 pb-10 min-h-[220px]">
               <p className="text-[1.25rem] font-bold text-white italic leading-[1.6] mb-10">
-                "We partnered with Solarize to power our schools sustainably. Their commitment to community impact and long-term performance is unmatched. It's more than just solar—it's smarter, cleaner, future-ready energy."
+                "Solarkon provides services at Industrial Scale,Fast and Quick.Probably one of the best solar installation services in Pakistan ."
               </p>
               <div className="flex items-center gap-4">
-                <img src={siteImages.clients.education} alt="Client" className="w-[50px] h-[50px] rounded-full object-cover border-2 border-[#d4ff00]" />
+                <img src={siteImages.clients.industrial} alt="Client" className="w-[50px] h-[50px] rounded-full object-cover border-2 border-[#d4ff00]" />
                 <div>
-                  <h4 className="text-white font-bold text-base">Miguel Herrera</h4>
-                  <p className="text-[#d4ff00] text-sm font-medium">BrightPath Healthcare</p>
+                  <h4 className="text-white font-bold text-base">Bashir Sons</h4>
+                  <p className="text-[#d4ff00] text-sm font-medium">Bahsir Sons Industries</p>
                 </div>
               </div>
             </div>
