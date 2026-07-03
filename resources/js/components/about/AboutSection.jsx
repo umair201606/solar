@@ -1,5 +1,4 @@
-import { ShieldCheck, MessageCircle, Heart, ArrowUpRight } from "lucide-react";
-import { Link } from "@inertiajs/react";
+import { ShieldCheck, MessageCircle, Heart } from "lucide-react";
 import { siteImages } from "../../data/siteImages";
 
 export default function AboutSection() {
@@ -74,20 +73,7 @@ export default function AboutSection() {
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-4 mt-10">
-            <Link
-              href="/solutions"
-              className="inline-flex items-center gap-2 bg-dark-bg text-white px-8 py-4 rounded-full font-bold text-sm hover:bg-dark-bg/90 transition-colors"
-            >
-              Get to Know <ArrowUpRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 bg-primary text-dark-bg px-8 py-4 rounded-full font-bold text-sm hover:bg-primary/90 transition-colors"
-            >
-              Say Hello <ArrowUpRight className="w-4 h-4" />
-            </Link>
-          </div>
+
         </div>
       </div>
     </section>
