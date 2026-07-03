@@ -1,34 +1,7 @@
-import { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import HeroCards from './HeroCards';
 
-const maskSvg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1403' height='852' viewBox='0 0 1403 852'%3E%3Cpath fill='white' d='M679 852C695.569 852 709 838.569 709 822V538C709 521.431 722.431 508 739 508H1373C1389.57 508 1403 494.569 1403 478V30C1403 13.4314 1389.57 0 1373 0H30C13.4315 0 0 13.4315 0 30V822C0 838.569 13.4315 852 30 852H679Z'/%3E%3C/svg%3E`;
-
 export default function HeroSection() {
-    const [isDesktop, setIsDesktop] = useState(
-        () => typeof window !== 'undefined' && window.innerWidth >= 1024,
-    );
-
-    useEffect(() => {
-        const checkSize = () => setIsDesktop(window.innerWidth >= 1024);
-        checkSize();
-        window.addEventListener('resize', checkSize);
-        return () => window.removeEventListener('resize', checkSize);
-    }, []);
-
-    const maskStyle = isDesktop
-        ? {
-              WebkitMaskImage: `url("${maskSvg}")`,
-              WebkitMaskRepeat: 'no-repeat',
-              WebkitMaskSize: '100% 100%',
-              WebkitMaskPosition: 'center',
-              maskImage: `url("${maskSvg}")`,
-              maskRepeat: 'no-repeat',
-              maskSize: '100% 100%',
-              maskPosition: 'center',
-          }
-        : undefined;
-
     return (
         <section
             className="w-full relative overflow-x-hidden bg-white md:px-2 md:py-1 lg:px-3 lg:py-2"
@@ -40,8 +13,7 @@ export default function HeroSection() {
                     
                     {/* Background Mask & Static Hero Image */}
                     <div
-                        className="absolute inset-0 z-0 overflow-hidden bg-[#0a2316]"
-                        style={maskStyle}
+                        className="absolute inset-0 z-0 overflow-hidden bg-[#0a2316] hero-mask"
                     >
                         <img
                             src="/final.webp"
