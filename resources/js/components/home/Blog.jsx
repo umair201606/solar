@@ -83,12 +83,15 @@ export default function Blog() {
             time.
           </p>
         </div>
+        <button className="bg-[#d4ff00] text-[#041a12] px-8 py-4 rounded-full font-bold flex items-center gap-2 hover:bg-[#041a12] hover:text-white transition-colors shrink-0 shadow-lg">
+          Read More <Zap className="w-5 h-5 fill-current" />
+        </button>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-8">
         {posts.map((post, idx) => (
           <Reveal key={post.title} animation="fade-up" delay={`${idx * 150}ms`}>
-            <BlogCard {...post} idx={idx} />
+            <BlogCard {...post} />
           </Reveal>
         ))}
       </div>

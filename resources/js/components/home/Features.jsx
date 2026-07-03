@@ -70,31 +70,27 @@ export default function Features() {
             <strong className="text-black font-bold">Solarkon</strong> combines breakthrough solar technology with real-world sustainability, delivering clean energy solutions that drive progress, reduce emissions, and empower communities globally.
           </p>
 
-          <div className="space-y-5 md:space-y-6">
+          <div className="space-y-6">
             {whyChooseSolarkon.slice(0, 3).map((item, idx) => (
               <div key={idx} className="relative w-full group drop-shadow-sm hover:drop-shadow-md transition-all">
+                <div className="absolute top-0 right-0 w-[calc(100%-84px)] h-full bg-[#041a12] rounded-[1.5rem] transition-colors group-hover:bg-[#0a261a]"></div>
                 
-                <div className="absolute top-0 right-0 w-[calc(100%-87px)] h-full bg-[#041a12] rounded-[1.5rem] transition-colors group-hover:bg-[#0a261a]"></div>
+                <div className="absolute bottom-0 left-0 w-full h-[calc(100%-84px)] bg-[#041a12] rounded-[1.5rem] transition-colors group-hover:bg-[#0a261a]"></div>
                 
-                <div className="absolute bottom-0 left-0 w-full h-[calc(100%-87px)] bg-[#041a12] rounded-[1.5rem] transition-colors group-hover:bg-[#0a261a]"></div>
+                <div className="absolute bottom-0 right-0 w-[calc(100%-60px)] h-[calc(100%-84px)] bg-[#041a12] rounded-br-[1.5rem] transition-colors group-hover:bg-[#0a261a]"></div>
                 
-                <svg 
-                  className="absolute top-[63.5px] left-[63.5px] w-[25px] h-[25px] text-[#041a12] group-hover:text-[#0a261a] transition-colors z-0" 
-                  viewBox="0 0 24 24" 
-                  fill="currentColor"
-                >
+                <svg className="absolute top-[60px] left-[61px] w-[24px] h-[24px] text-[#041a12] group-hover:text-[#0a261a] transition-colors z-0" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M 24 0 C 24 13.25 13.25 24 0 24 L 24 24 Z" />
                 </svg>
 
-                <div className="absolute top-[16px] left-[16px] w-[56px] h-[56px] bg-[#d4ff00] rounded-[1.15rem] flex items-center justify-center font-black text-[1.4rem] text-[#041a12] z-20 shadow-sm">
+                <div className="absolute top-[12px] left-[12px] w-[60px] h-[60px] bg-[#d4ff00] rounded-[1.25rem] flex items-center justify-center font-black text-[1.5rem] text-[#041a12] z-20">
                   {item.num || `0${idx + 1}`}
                 </div>
                 
-                <div className="relative z-10 pl-[108px] pr-6 py-7 min-h-[140px] flex flex-col justify-center">
-                  <h3 className="text-[#d4ff00] font-bold text-[1.25rem] mb-2">{item.title}</h3>
-                  <p className="text-[14px] md:text-[15px] font-medium text-gray-300 leading-relaxed">{item.desc}</p>
+                <div className="relative z-10 pl-[108px] pr-8 py-8 min-h-[140px] flex flex-col justify-center">
+                  <h3 className="text-[#d4ff00] font-bold text-[1.3rem] mb-1.5">{item.title}</h3>
+                  <p className="text-[14px] font-light text-gray-300 leading-relaxed">{item.desc}</p>
                 </div>
-
               </div>
             ))}
           </div>
