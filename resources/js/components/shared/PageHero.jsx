@@ -107,7 +107,7 @@ export default function PageHero({ title }) {
         <Navbar />
         <div className="flex flex-1 items-start justify-center px-6 md:px-16 lg:px-20 py-12 md:py-20">
           <div className="max-w-4xl">
-            <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg animate-fade-in-up">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg animate-fade-in-up">
               {title}
             </h1>
           </div>

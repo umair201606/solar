@@ -20,7 +20,7 @@ export default function Features() {
   }, []);
 
   return (
-    <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 bg-white">
+    <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 bg-white">
       <div className="grid lg:grid-cols-[45%_55%] gap-12 lg:gap-16 items-start">
         
         {/* Left: Image with Parallax */}

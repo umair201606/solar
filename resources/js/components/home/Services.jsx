@@ -8,11 +8,11 @@ export default function Services() {
   const [sectionRef, isVisible] = useScrollAnimation();
 
   return (
-    <section className="py-24 max-w-7xl mx-auto px-6 overflow-hidden">
+    <section className="py-16 sm:py-24 max-w-7xl mx-auto px-6 overflow-hidden">
       <div ref={sectionRef}>
-        
+
         {/* Top Header & Stats */}
-        <div className="flex flex-col lg:flex-row justify-between  gap-12 mb-13">
+        <div className="flex flex-col lg:flex-row justify-between  gap-10 sm:gap-12 mb-13">
           <div className="max-w-2xl overflow-hidden">
             <div className="border border-[rgb(5,31,3)] rounded-full px-5 py-1.5 w-max mb-6">
               <span className="text-[rgb(5,31,3)] text-sm font-medium tracking-wide">Powering Solutions</span>
@@ -30,28 +30,28 @@ export default function Services() {
           </div>
           
              {/* Stats */}
-          <div className="flex items-end lg:self-end gap-14">
+          <div className="flex items-end lg:self-end gap-8 sm:gap-12 lg:gap-14">
 
             <div className="flex flex-col basis-auto ">
-              <div className="text-[48px] tracking-[-4px] font-extrabold  text-[#021b06]">
+              <div className="text-[2.5rem] sm:text-[48px] tracking-[-3px] sm:tracking-[-4px] font-extrabold  text-[#021b06]">
                 173k
               </div>
 
-              <div className="text-[22px] tracking-tighter leading-5 font-bold text-[#021b06]">
+              <div className="text-[18px] sm:text-[22px] tracking-tighter leading-5 font-bold text-[#021b06]">
                 kWh Generated
                 <br />
                 Daily
               </div>
             </div>
 
-            <div className="w-px h-32 bg-gray-300" />
+            <div className="w-px h-24 sm:h-32 bg-gray-300" />
 
             <div className="flex flex-col basis-auto gap-2.5">
-              <div className="text-[48px] tracking-[-2px] font-extrabold  text-[#021b06]">
+              <div className="text-[2.5rem] sm:text-[48px] tracking-[-2px] font-extrabold  text-[#021b06]">
                 200+
               </div>
 
-              <div className="text-[22px] tracking-tighter leading-5 font-bold text-[#021b06]">
+              <div className="text-[18px] sm:text-[22px] tracking-tighter leading-5 font-bold text-[#021b06]">
                 Homes & Businesses
                 <br />
                 Powered

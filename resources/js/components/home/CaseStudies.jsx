@@ -6,7 +6,7 @@ export default function CaseStudies() {
   const [sectionRef, isVisible] = useScrollAnimation();
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-20 overflow-hidden">
+    <section className="mx-auto max-w-7xl px-6 py-16 sm:py-20 overflow-hidden">
       <div ref={sectionRef} className="mb-12 text-center overflow-hidden">
         <span className="rounded-full border border-gray-300 px-4 py-1 text-sm text-gray-600">
           Ongoing & Completed

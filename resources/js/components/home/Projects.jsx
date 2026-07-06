@@ -24,7 +24,7 @@ export default function Projects() {
   }, []);
 
   return (
-    <section className="relative py-24 overflow-hidden text-white rounded-none sm:rounded-[3rem] sm:mx-6 my-10">
+    <section className="relative py-16 sm:py-24 overflow-hidden text-white rounded-none sm:rounded-[3rem] sm:mx-6 my-10">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img src="/background.webp" alt="" className="w-full h-full object-cover" />

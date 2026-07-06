@@ -4,11 +4,11 @@ import { Quote } from "lucide-react";
 export default function Testimonials() {
   
   return (
-    <section className="py-24 bg-white max-w-7xl mx-auto px-4 sm:px-6">
-      <div className="grid lg:grid-cols-[40%_60%] gap-12 lg:gap-16 items-start">
-        
+    <section className="py-16 sm:py-24 bg-white max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="grid lg:grid-cols-[40%_60%] gap-10 lg:gap-16 items-start">
+
         {/* Left: Standard Image */}
-        <div className="relative w-full h-[650px] rounded-[2.5rem] overflow-hidden drop-shadow-xl">
+        <div className="relative w-full h-[360px] sm:h-[460px] lg:h-[650px] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden drop-shadow-xl">
           <img src="/images/solar-team-install.webp" alt="Team" className="w-full h-full object-cover" />
         </div>
 

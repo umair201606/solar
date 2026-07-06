@@ -6,11 +6,6 @@ import { siteImages } from "../../data/siteImages";
 export default function FAQContactCard() {
   return (
     <div className="relative sticky top-28 h-fit overflow-hidden rounded-3xl bg-dark-card p-8 text-white">
-      <div
-        className="pointer-events-none absolute bottom-0 right-0 h-48 w-48 bg-cover bg-center opacity-10"
-        style={{ backgroundImage: `url('${siteImages.panelsCloseup}')` }}
-        aria-hidden
-      />
 
       <span className="rounded-full border border-primary px-4 py-1 text-xs text-primary">
         Have Any Other Question?

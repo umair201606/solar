@@ -44,7 +44,7 @@ export default function Blog() {
   }, []);
 
   return (
-    <section className="py-24 max-w-7xl mx-auto px-6 overflow-hidden">
+    <section className="py-16 sm:py-24 max-w-7xl mx-auto px-6 overflow-hidden">
       <div ref={sectionRef} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 overflow-hidden">
         <div className="overflow-hidden">
           <div ref={pillRef} className="relative w-max mb-2 inline-block">

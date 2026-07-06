@@ -12,9 +12,9 @@ export default function Solutions() {
       <PageHero title="Energy Solutions" />
 
       <Reveal animation="fade-left" delay="50ms" slideOffset={60}>
-        <section className="mx-auto max-w-7xl px-6 py-20">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-dark-bg slide-from-left">
+        <section className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
+          <div className="mb-12 sm:mb-16 text-center">
+            <h2 className="mb-4 text-3xl sm:text-4xl font-bold text-dark-bg slide-from-left">
               Flexible Financing &amp; Energy Options
             </h2>
             <p className="mx-auto max-w-2xl text-gray-600 animate-fade-in-up-delay-1">
@@ -30,7 +30,7 @@ export default function Solutions() {
               return (
                 <div
                   key={item.title}
-                  className="rounded-[2rem] border border-gray-100 bg-light-bg p-8"
+                  className="rounded-[2rem] border border-gray-100 bg-light-bg p-6 sm:p-8"
                 >
                   <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20">
                     <Icon className="h-6 w-6 text-dark-bg" />
@@ -52,10 +52,10 @@ export default function Solutions() {
             })}
           </div>
 
-          <div className="rounded-[3rem] bg-dark-card p-12 text-white">
+          <div className="rounded-[2rem] sm:rounded-[3rem] bg-dark-card p-6 sm:p-10 lg:p-12 text-white">
             <div className="mb-8 flex items-center gap-3">
-              <Landmark className="h-8 w-8 text-primary" />
-              <h3 className="text-3xl font-bold">Flexible Financing Solutions</h3>
+              <Landmark className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 text-primary" />
+              <h3 className="text-2xl sm:text-3xl font-bold">Flexible Financing Solutions</h3>
             </div>
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
               {financingOptions.map((opt) => (
