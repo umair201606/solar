@@ -53,10 +53,10 @@ export default function Features() {
           </h2>
 
           <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-8 sm:mb-10 pr-0 sm:pr-6 lg:pr-10">
-            <strong className="text-black font-bold">Solarkon</strong> combines
-            breakthrough solar technology with real-world sustainability,
-            delivering clean energy solutions that drive progress, reduce
-            emissions, and empower communities globally.
+            <strong className="text-black font-bold">Solarkon</strong> pairs
+            premium solar technology with certified engineering to deliver
+            systems that cut energy bills and run reliably for years. From site
+            survey to after-sales support, we handle every step.
           </p>
 
           {/* Cards Wrapper */}

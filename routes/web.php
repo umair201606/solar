@@ -10,3 +10,4 @@ Route::inertia('/about', 'About')->name('about');
 Route::inertia('/contact', 'Contact')->name('contact');
 Route::inertia('/solutions', 'Solutions')->name('solutions');
 Route::inertia('/store', 'Store')->name('store');
+Route::get('/blog/{slug}', fn (string $slug) => Inertia::render('BlogDetail', ['slug' => $slug]))->name('blog.show');

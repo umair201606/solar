@@ -20,12 +20,12 @@ export default function Services() {
             <h2
               className={`text-4xl md:text-5xl lg:text-[48px] font-bold text-text-main leading-[1.1] tracking-tight ${isVisible ? 'slide-from-left' : 'slide-from-left-init'}`}
             >
-              Revolutionizing Energy for Tomorrow's World
+              Complete Solar Solutions for Every Sector
             </h2>
             <p
               className={`text-text-muted mt-6 text-lg leading-relaxed ${isVisible ? 'animate-fade-in-up-delay-3' : 'animate-fade-in-up-init'}`}
             >
-              At <strong className="text-dark-bg">Solarkon</strong>, we design and implement clean energy systems that help people, businesses, and the planet thrive efficiently, sustainably, and intelligently.
+              At <strong className="text-dark-bg">Solarkon</strong>, we design, install, and maintain complete solar systems for homes, businesses, industries, and farms, cutting energy costs with dependable, expertly engineered power.
             </p>
           </div>
           

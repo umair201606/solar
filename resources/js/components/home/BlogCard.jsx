@@ -1,8 +1,12 @@
 import { ArrowRight, Clock, Calendar } from "lucide-react";
+import { Link } from "@inertiajs/react";
 
-export default function BlogCard({ title, img, category, date, readTime }) {
+export default function BlogCard({ title, img, category, date, readTime, excerpt, slug }) {
   return (
-    <article className="group bg-gradient-to-b from-dark-card to-dark-bg/85 text-white rounded-3xl overflow-hidden shadow-[0_10px_35px_rgba(0,0,0,0.25)] border border-white/5 hover:border-primary/20 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(212,255,0,0.06)] transition-all duration-500 flex flex-col h-full">
+    <Link
+      href={slug ? `/blog/${slug}` : "#"}
+      className="group bg-gradient-to-b from-dark-card to-dark-bg/85 text-white rounded-3xl overflow-hidden shadow-[0_10px_35px_rgba(0,0,0,0.25)] border border-white/5 hover:border-primary/20 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(212,255,0,0.06)] transition-all duration-500 flex flex-col h-full"
+    >
       
       {/* Zoomable Image Container */}
       <div className="relative w-full h-52 overflow-hidden">
@@ -43,8 +47,9 @@ export default function BlogCard({ title, img, category, date, readTime }) {
           </h3>
 
           {/* Snippet Description */}
-          <p className="text-gray-400 text-sm font-light leading-relaxed mb-6">
-            Explore inside insights on solar setups, system financing, and community impact from Pakistan's sustainable energy pioneers.
+          <p className="text-gray-400 text-sm font-light leading-relaxed mb-6 line-clamp-3">
+            {excerpt ??
+              "Explore inside insights on solar setups, system financing, and community impact from Pakistan's sustainable energy pioneers."}
           </p>
         </div>
 
@@ -54,6 +59,6 @@ export default function BlogCard({ title, img, category, date, readTime }) {
           <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

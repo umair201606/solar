@@ -135,7 +135,7 @@ export const projects = [
   {
     slug: "bashir-sons-ongoing",
     img: "/images/vibrant_images/ongoingB.webp",
-    title: "Bashir Sons Steel Industry — Phase 2",
+    title: "Bashir Sons Steel Industry, Phase 2",
     detailTitle: "Bashir Sons Steel Industry 10 MWp Ongoing Expansion",
     loc: "Kala Shah Kaku, Pakistan",
     desc: "Second phase expansion for Bashir Sons Steel Industry, adding 10 MWp of solar capacity to power growing industrial operations.",

@@ -3,30 +3,7 @@ import { Zap } from "lucide-react";
 import BlogCard from "./BlogCard";
 import Reveal from "../shared/Reveal";
 import useScrollAnimation from '../../lib/useScrollAnimation';
-
-const posts = [
-  {
-    title: "Off-Grid vs Hybrid vs On-Grid: Which System Is Right for You?",
-    img: "/images/vibrant_images/inverter1.webp",
-    category: "Solar Guide",
-    date: "May 20, 2026",
-    readTime: "5 min read",
-  },
-  {
-    title: "Flexible Financing Options for Solar in Pakistan",
-    img: "/images/vibrant_images/solarkon.webp",
-    category: "Finance Tips",
-    date: "May 18, 2026",
-    readTime: "4 min read",
-  },
-  {
-    title: "700+ Installations: Sectors We Serve Across Pakistan",
-    img: "/images/vibrant_images/team2.webp",
-    category: "Sectors Served",
-    date: "May 15, 2026",
-    readTime: "6 min read",
-  },
-];
+import { blogPosts } from "../../data/blogData";
 
 export default function Blog() {
   const [sectionRef, isVisible] = useScrollAnimation();
@@ -44,7 +21,7 @@ export default function Blog() {
   }, []);
 
   return (
-    <section className="py-16 sm:py-24 max-w-7xl mx-auto px-6 overflow-hidden">
+    <section id="blog" className="scroll-mt-24 py-16 sm:py-24 max-w-7xl mx-auto px-6 overflow-hidden">
       <div ref={sectionRef} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 overflow-hidden">
         <div className="overflow-hidden">
           <div ref={pillRef} className="relative w-max mb-2 inline-block">
@@ -78,17 +55,17 @@ export default function Blog() {
           <p
             className={`text-gray-600 max-w-xl font-light text-base md:text-lg ${isVisible ? 'animate-fade-in-up-delay-1' : 'animate-fade-in-up-init'}`}
           >
-            Explore how <strong className="text-dark-bg">Solarkon</strong>{" "}
-            transforms industries, communities, and the planet. One story at a
-            time.
+            Real projects, financing know-how, and practical solar guidance from
+            the <strong className="text-dark-bg">Solarkon</strong> team installing
+            systems across Pakistan.
           </p>
         </div>
        
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
-        {posts.map((post, idx) => (
-          <Reveal key={post.title} animation="fade-up" delay={`${idx * 150}ms`}>
+        {blogPosts.map((post, idx) => (
+          <Reveal key={post.slug} animation="fade-up" delay={`${idx * 150}ms`}>
             <BlogCard {...post} />
           </Reveal>
         ))}

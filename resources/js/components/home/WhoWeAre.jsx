@@ -30,12 +30,12 @@ export default function WhoWeAre() {
                             <p
                                 className={`mt-6 sm:mt-10 mb-3 text-[16px] sm:text-[18px] tracking-tight leading-7 text-[#243024] ${isVisible ? 'animate-fade-in-up-delay-1' : 'animate-fade-in-up-init'}`}
                             >
-                                <strong>Solarkon</strong> is a renewable energy
-                                company committed to driving global
-                                sustainability through smart solar technology,
-                                empowering homes, businesses and communities to
-                                transition to a cleaner, more efficient and
-                                future-proof energy ecosystem.
+                                <strong>Solarkon</strong> is a full-service solar
+                                company. From the first site survey to
+                                installation and long-term after-sales support,
+                                our certified engineers design and deliver
+                                dependable solar systems for homes, businesses,
+                                and industries across Pakistan.
                             </p>
                         </div>
 

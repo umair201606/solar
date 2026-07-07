@@ -6,7 +6,7 @@ export const solutionCategories = [
   },
   {
     title: "Off-Grid Solar System",
-    desc: "An off-grid solar system is a complete power solution that operates independently from the utility grid. It uses solar panels, batteries, and an inverter to generate, store, and supply electricity—ideal for remote areas or places with unreliable grid access. Our off-grid systems ensure uninterrupted power, reduce fuel dependency, and promote clean, sustainable energy.",
+    desc: "An off-grid solar system is a complete power solution that operates independently from the utility grid. It uses solar panels, batteries, and an inverter to generate, store, and supply electricity ideal for remote areas or places with unreliable grid access. Our off-grid systems ensure uninterrupted power, reduce fuel dependency, and promote clean, sustainable energy.",
     features: ["Complete Independence", "Battery Storage", "Ideal for Remote Areas"],
   },
   {
@@ -33,7 +33,7 @@ export const financingOptions = [
     details: [
       "Easy entry with low upfront cost",
       "Monthly payments customized to your budget",
-      "Direct installment plan—no bank involvement",
+      "Direct installment plan with no bank involvement",
       "Faster approval and installation process",
       "Own the system after final installment",
       "Ideal for households and small businesses",

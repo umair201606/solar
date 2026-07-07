@@ -60,7 +60,7 @@ export const whyChooseSolarkon = [
   {
     num: "05",
     title: "Flexible Financing",
-    desc: "Flexible financing tailored to customer needs—from self-finance to PPA models.",
+    desc: "Flexible financing tailored to customer needs, from self-finance to PPA models.",
   },
   {
     num: "06",
@@ -72,51 +72,32 @@ export const whyChooseSolarkon = [
 export const serviceOfferings = [
   {
     title: "Residential Solutions",
-    desc: "Lowering electricity costs with top-tier solutions for Pakistani community homes solar power systems tailored to your needs.",
+    desc: "Skilled engineers and top-tier systems that cut electricity bills for homes and communities across Pakistan.",
     dark: false,
   },
   {
     title: "Commercial Solutions",
-    desc: "Efficient solar power for workplaces across Pakistan, replacing high-cost conventional energy with reliable clean power.",
+    desc: "Efficient solar power for workplaces and offices, replacing high-cost conventional energy with reliable, clean electricity.",
     dark: true,
   },
   {
     title: "Industrial Solutions",
-    desc: "High-capacity systems for factories and warehouses stable energy and operational savings without compromising performance.",
+    desc: "High-capacity systems for factories and warehouses, delivering stable energy and real operational savings under heavy load without compromising performance.",
     dark: false,
   },
   {
     title: "Agricultural Solutions",
-    desc: "Dependable off-grid solar for irrigation, pumping, and farm operations—cutting diesel costs and boosting profitability.",
+    desc: "Dependable solar for tube wells, drip irrigation, and farm operations that cuts diesel costs while boosting yield and income.",
     dark: false,
   },
 ];
 
-export const caseStudies = [
-  {
-    subtitle: "10 MWp ongoing expansion — Phase 2",
-    title: "Bashir Sons Steel Industry",
-    loc: "Kala Shah Kaku | Ongoing",
-    img: "/images/vibrant_images/ongoingB.webp",
-  },
-  {
-    subtitle: "5 MWp ground-mounted & rooftop",
-    title: "Bashir Sons Steel Industry",
-    loc: "Kala Shah Kaku | Completed",
-    img: "/images/vibrant_images/bashirsons1.webp",
-  },
-  {
-    subtitle: "3.5 MWp across multiple branches",
-    title: "Gourmet Bakeries",
-    loc: "Multiple Branches | Completed",
-    img: "/images/vibrant_images/gourmet.webp",
-  },
-  {
-    subtitle: "1.2 MWp food processing facility",
-    title: "Hajvery Foods",
-    loc: "Daska, Sialkot | Completed",
-    img: "/images/vibrant_images/hajvery.webp",
-  },
+export const ongoingProjects = [
+  { name: "Bashir Sons Steel Industry", capacity: "10", unit: "MWp", loc: "Kala Shah Kaku" },
+  { name: "Al Fateh Steel Mill", capacity: "6", unit: "MWp", loc: "Daska, Sialkot" },
+  { name: "Five Star Steel Industry", capacity: "5", unit: "MWp", loc: "Multiple Sites" },
+  { name: "Small Scale Commercial", capacity: "600", unit: "KWp", loc: "Multiple Sites" },
+  { name: "Other Residential", capacity: "400", unit: "KWp", loc: "Multiple Sites" },
 ];
 
 export const productsRange = [

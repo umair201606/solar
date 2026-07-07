@@ -92,11 +92,11 @@ export default function HeroCards({ overlay = false }) {
             <div className="flex gap-4 xl:gap-5 flex-1 min-h-0">
 
               {/* Left: Text */}
-              <div className="flex flex-col justify-between flex-1 py-0.5">
+              <div className="flex flex-col justify-start flex-1 py-0.5">
                 <h3 className="font-bold text-[20px] lg:text-[22px] xl:text-[34px] leading-tight tracking-[-0.02em] text-[#051F03]">
                   Advancing Solar<br />Solutions
                 </h3>
-                <p className="text-[11px] lg:text-[12px] xl:text-[14px] leading-snug font-medium tracking-[-0.02em] text-black mt-2 overflow-hidden text-ellipsis line-clamp-4 xl:line-clamp-none">
+                <p className="text-[11px] lg:text-[12px] xl:text-[14px] leading-snug font-medium tracking-[-0.02em] text-black mt-3 xl:mt-4 overflow-hidden text-ellipsis line-clamp-4 xl:line-clamp-none">
                   Solarkon Private Limited is a premier solar energy solutions provider in Pakistan, known for delivering high-performance systems tailored to residential, commercial, industrial, and agricultural needs.
                 </p>
               </div>
@@ -206,7 +206,7 @@ export default function HeroCards({ overlay = false }) {
         {/* Card 2: Stats Grid */}
         <div className={`bg-white p-6 md:p-8 rounded-[24px] xl:rounded-[2rem] flex flex-col justify-between shadow-[0_4px_6px_2px_rgba(0,0,0,0.1),0_2px_4px_2px_rgba(0,0,0,0.06)] ${overlay ? 'h-full' : 'h-auto min-h-[220px] md:min-h-[240px]'}`}>
           <p className="text-[13px] md:text-[14px] xl:text-[13px] text-gray-600 font-medium leading-relaxed">
-            At Solarkon, we power growth and sustainability with smart solar solutions for businesses, communities, and the planet.
+            At Solarkon, we help homes, businesses, and industries across Pakistan cut energy costs with expertly engineered solar systems built to last.
           </p>
           <div className="flex items-end gap-3 xl:gap-4 mt-6 lg:mt-4 xl:mt-4">
             <div className="flex-1">
