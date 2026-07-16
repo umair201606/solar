@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Zap } from "lucide-react";
 import { Link } from "@inertiajs/react";
-import { projects } from "../../data/projectsData";
+import { useProjects } from "../../data/projectsData";
 
 export default function Projects() {
+  const projects = useProjects();
   const [visible, setVisible] = useState(false);
   const headingRef = useRef(null);
 

@@ -1,7 +1,8 @@
-import { projects } from "../../data/projectsData";
+import { useProjects } from "../../data/projectsData";
 import ProjectCard from "./ProjectCard";
 
 export default function ProjectsList() {
+  const projects = useProjects();
   return (
     <section className="bg-white py-20">
       <div className="max-w-7xl mx-auto px-6 md:px-8">

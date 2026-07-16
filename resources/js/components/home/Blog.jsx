@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Zap } from "lucide-react";
 import BlogCard from "./BlogCard";
-import Reveal from "../shared/Reveal";
 import useScrollAnimation from '../../lib/useScrollAnimation';
 import { blogPosts } from "../../data/blogData";
 
@@ -64,10 +63,8 @@ export default function Blog() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
-        {blogPosts.map((post, idx) => (
-          <Reveal key={post.slug} animation="fade-up" delay={`${idx * 150}ms`}>
-            <BlogCard {...post} />
-          </Reveal>
+        {blogPosts.map((post) => (
+          <BlogCard key={post.slug} {...post} />
         ))}
       </div>
     </section>

@@ -3,10 +3,10 @@ import PageHero from "../components/shared/PageHero";
 import ProjectDetailHeader from "../components/projects/detail/ProjectDetailHeader";
 import ProjectDetailContent from "../components/projects/detail/ProjectDetailContent";
 import OtherProjects from "../components/projects/OtherProjects";
-import { getProjectBySlug } from "../data/projectsData";
+import { useProjects, getProjectBySlug } from "../data/projectsData";
 
 export default function ProjectDetail({ slug }) {
-  const project = getProjectBySlug(slug);
+  const project = getProjectBySlug(useProjects(), slug);
 
   if (!project) {
     return (

@@ -1,7 +1,6 @@
 import PageHero from "../components/shared/PageHero";
 import { CheckCircle, Zap, ShieldCheck, PieChart, Landmark } from "lucide-react";
 import { financingOptions, solutionCategories } from "../data/solutionsData";
-import Reveal from "../components/shared/Reveal";
 import Blog from "../components/home/Blog";
 
 const icons = [Zap, ShieldCheck, PieChart];
@@ -21,8 +20,7 @@ export default function Solutions() {
     <>
       <PageHero title="Energy Solutions" />
 
-      <Reveal animation="fade-left" delay="50ms" slideOffset={60}>
-        <section className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
+      <section className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
           <div className="mb-12 sm:mb-16 text-center">
             <h2 className="mb-4 text-3xl sm:text-4xl font-bold text-dark-bg slide-from-left">
               Solar Systems Engineered Around You
@@ -120,10 +118,7 @@ export default function Solutions() {
             </div>
           </div>
         </section>
-      </Reveal>
-      <Reveal animation="scale-up" delay="50ms">
-        <Blog />
-      </Reveal>
+      <Blog />
     </>
   );
 }

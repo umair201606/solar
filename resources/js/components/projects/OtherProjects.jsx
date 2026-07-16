@@ -1,11 +1,11 @@
 import { Link } from "@inertiajs/react";
 import { Zap } from "lucide-react";
-import { getOtherProjects } from "../../data/projectsData";
+import { useProjects, getOtherProjects } from "../../data/projectsData";
 import ProjectCard from "./ProjectCard";
 import useScrollAnimation from '../../lib/useScrollAnimation';
 
 export default function OtherProjects({ currentSlug }) {
-  const others = getOtherProjects(currentSlug);
+  const others = getOtherProjects(useProjects(), currentSlug);
   const [sectionRef, isVisible] = useScrollAnimation();
 
   return (

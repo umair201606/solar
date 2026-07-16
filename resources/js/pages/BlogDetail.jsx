@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { Link } from "@inertiajs/react";
-import { ArrowLeft, ArrowRight, Calendar, Clock, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Clock, User, X, ZoomIn } from "lucide-react";
 import PageHero from "../components/shared/PageHero";
 import SEO from "../components/SEO";
 import { blogPosts, getPostBySlug } from "../data/blogData";
 
-function Block({ block }) {
+function Block({ block, onImageClick }) {
   switch (block.type) {
     case "heading":
       return (
@@ -32,12 +33,20 @@ function Block({ block }) {
     case "image":
       return (
         <figure className="my-10">
-          <img
-            src={block.src}
-            alt={block.caption || ""}
-            loading="lazy"
-            className="w-full rounded-[1.5rem] object-cover shadow-lg"
-          />
+          <div
+            className="relative group cursor-zoom-in"
+            onClick={() => onImageClick(block.src)}
+          >
+            <img
+              src={block.src}
+              alt={block.caption || ""}
+              loading="lazy"
+              className="w-full rounded-[1.5rem] object-cover shadow-lg"
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-[1.5rem] flex items-center justify-center">
+              <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+            </div>
+          </div>
           {block.caption && (
             <figcaption className="mt-3 text-center text-sm text-gray-500">
               {block.caption}
@@ -55,6 +64,7 @@ function Block({ block }) {
 }
 
 export default function BlogDetail({ slug }) {
+  const [lightbox, setLightbox] = useState(null);
   const post = getPostBySlug(slug);
 
   if (!post) {
@@ -129,9 +139,30 @@ export default function BlogDetail({ slug }) {
         {/* Body */}
         <div>
           {post.content.map((block, idx) => (
-            <Block key={idx} block={block} />
+            <Block key={idx} block={block} onImageClick={setLightbox} />
           ))}
         </div>
+
+        {/* Image lightbox */}
+        {lightbox && (
+          <div
+            className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4 cursor-pointer"
+            onClick={() => setLightbox(null)}
+          >
+            <button
+              onClick={() => setLightbox(null)}
+              className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <img
+              src={lightbox}
+              alt="Full size"
+              className="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        )}
 
         {/* CTA */}
         <div className="mt-14 flex flex-col items-start gap-5 rounded-[2rem] bg-dark-bg p-8 text-white sm:flex-row sm:items-center sm:justify-between">

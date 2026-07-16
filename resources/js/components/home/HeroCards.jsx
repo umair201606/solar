@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { User, ArrowUpRight, X, Volume2, VolumeX, Maximize2 } from "lucide-react";
 import { Link } from "@inertiajs/react";
+import AnimatedCounter from "../ui/AnimatedCounter";
 
 export default function HeroCards({ overlay = false }) {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -72,6 +73,25 @@ export default function HeroCards({ overlay = false }) {
       videoRef.current.play().catch(() => {});
     }
   };
+
+  const statsRef = useRef(null);
+  const [statsVisible, setStatsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = statsRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsVisible(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const toggleMute = (e) => {
     e.stopPropagation();
@@ -204,13 +224,15 @@ export default function HeroCards({ overlay = false }) {
         )}
 
         {/* Card 2: Stats Grid */}
-        <div className={`bg-white p-6 md:p-8 rounded-[24px] xl:rounded-[2rem] flex flex-col justify-between shadow-[0_4px_6px_2px_rgba(0,0,0,0.1),0_2px_4px_2px_rgba(0,0,0,0.06)] ${overlay ? 'h-full' : 'h-auto min-h-[220px] md:min-h-[240px]'}`}>
+        <div ref={statsRef} className={`bg-white p-6 md:p-8 rounded-[24px] xl:rounded-[2rem] flex flex-col justify-between shadow-[0_4px_6px_2px_rgba(0,0,0,0.1),0_2px_4px_2px_rgba(0,0,0,0.06)] ${overlay ? 'h-full' : 'h-auto min-h-[220px] md:min-h-[240px]'}`}>
           <p className="text-[13px] md:text-[14px] xl:text-[13px] text-gray-600 font-medium leading-relaxed">
             At Solarkon, we help homes, businesses, and industries across Pakistan cut energy costs with expertly engineered solar systems built to last.
           </p>
           <div className="flex items-end gap-3 xl:gap-4 mt-6 lg:mt-4 xl:mt-4">
             <div className="flex-1">
-              <h4 className="text-[2.2rem] md:text-[2.6rem] lg:text-[2rem] xl:text-[2.8rem] font-black text-black tracking-tighter leading-none mb-1">+112k</h4>
+              <h4 className="text-[2.2rem] md:text-[2.6rem] lg:text-[2rem] xl:text-[2.8rem] font-black text-black tracking-tighter leading-none mb-1">
+                <AnimatedCounter value="+112k" enabled={statsVisible} />
+              </h4>
               <p className="text-[12px] md:text-[13px] lg:text-[11px] xl:text-[14px] font-bold text-black leading-tight">Solar Panels<br />Installed</p>
             </div>
             <div className="flex-1">

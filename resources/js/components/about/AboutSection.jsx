@@ -1,7 +1,28 @@
+import { useEffect, useState, useRef } from "react";
 import { ShieldCheck, MessageCircle, Heart } from "lucide-react";
 import { siteImages } from "../../data/siteImages";
+import AnimatedCounter from "../ui/AnimatedCounter";
 
 export default function AboutSection() {
+  const badgeRef = useRef(null);
+  const [badgeVisible, setBadgeVisible] = useState(false);
+
+  useEffect(() => {
+    const el = badgeRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setBadgeVisible(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const features = [
     {
       icon: <ShieldCheck className="w-6 h-6 text-primary-hover" />,
@@ -34,8 +55,10 @@ export default function AboutSection() {
           </div>
 
           {/* Glass Badge */}
-          <div className="absolute -bottom-8 right-3 sm:-bottom-10 sm:-right-8 z-20 bg-dark-bg/90 backdrop-blur-xl border border-primary/20 text-white p-6 sm:p-8 rounded-3xl shadow-xl max-w-[240px] sm:max-w-[280px]">
-            <div className="text-primary font-bold text-4xl sm:text-5xl mb-2">150<span className="text-3xl">+</span></div>
+          <div ref={badgeRef} className="absolute -bottom-8 right-3 sm:-bottom-10 sm:-right-8 z-20 bg-dark-bg/90 backdrop-blur-xl border border-primary/20 text-white p-6 sm:p-8 rounded-3xl shadow-xl max-w-[240px] sm:max-w-[280px]">
+            <div className="text-primary font-bold text-4xl sm:text-5xl mb-2">
+              <AnimatedCounter value="150+" enabled={badgeVisible} />
+            </div>
             <div className="text-sm font-medium tracking-wide uppercase text-gray-300">MW Capacity Installed</div>
             <p className="text-xs text-gray-400 mt-2">Setting new benchmarks in renewable energy across Pakistan.</p>
           </div>

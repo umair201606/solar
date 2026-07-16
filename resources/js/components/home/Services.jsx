@@ -1,6 +1,7 @@
 import { House, Drill, Factory, Tractor } from "lucide-react";
 import { serviceOfferings } from "../../data/companyData";
 import useScrollAnimation from '../../lib/useScrollAnimation';
+import AnimatedCounter from "../ui/AnimatedCounter";
 
 const icons = [House, Drill, Factory, Tractor];
 
@@ -34,7 +35,7 @@ export default function Services() {
 
             <div className="flex flex-col basis-auto ">
               <div className="text-[2.5rem] sm:text-[48px] tracking-[-3px] sm:tracking-[-4px] font-extrabold  text-[#021b06]">
-                173k
+                <AnimatedCounter value="173k" enabled={isVisible} />
               </div>
 
               <div className="text-[18px] sm:text-[22px] tracking-tighter leading-5 font-bold text-[#021b06]">
@@ -48,7 +49,7 @@ export default function Services() {
 
             <div className="flex flex-col basis-auto gap-2.5">
               <div className="text-[2.5rem] sm:text-[48px] tracking-[-2px] font-extrabold  text-[#021b06]">
-                200+
+                <AnimatedCounter value="200+" enabled={isVisible} />
               </div>
 
               <div className="text-[18px] sm:text-[22px] tracking-tighter leading-5 font-bold text-[#021b06]">

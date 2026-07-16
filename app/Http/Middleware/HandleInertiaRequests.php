@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,12 +36,21 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $isAdmin = $request->is('admin*') || $request->is('api/*') || $request->is('media*');
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
             ],
+            // Published projects power the public site (home, /projects, detail).
+            // Skipped for admin/api requests to avoid needless queries.
+            'projects' => $isAdmin ? [] : fn () => Project::where('is_published', true)
+                ->orderBy('order')
+                ->get()
+                ->map(fn (Project $p) => $p->toFrontend())
+                ->all(),
         ];
     }
 }
