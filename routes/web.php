@@ -7,6 +7,12 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\StoreController;
+use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\LeadController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\ProductImportExportController;
 
 // Public routes
 Route::inertia('/', 'Home')->name('home');
@@ -17,6 +23,11 @@ Route::inertia('/contact', 'Contact')->name('contact');
 Route::inertia('/solutions', 'Solutions')->name('solutions');
 Route::inertia('/store', 'Store')->name('store');
 Route::get('/blog/{slug}', fn (string $slug) => Inertia::render('BlogDetail', ['slug' => $slug]))->name('blog.show');
+
+// Public store API
+Route::get('/api/store/products', [StoreController::class, 'products'])->name('api.store.products');
+Route::post('/api/store/products/{product}/contact-click', [StoreController::class, 'contactClick'])->name('api.store.contact');
+Route::post('/api/store/track', [StoreController::class, 'track'])->name('api.store.track');
 
 // Public certificate verification (QR code target) + PDF download
 Route::get('/verify/{uuid}', [CertificateController::class, 'verify'])->name('certificate.verify');
@@ -46,6 +57,33 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/projects/{project}', [ProjectController::class, 'show'])->name('api.projects.show');
     Route::put('/api/projects/{project}', [ProjectController::class, 'update'])->name('api.projects.update');
     Route::delete('/api/projects/{project}', [ProjectController::class, 'destroy'])->name('api.projects.destroy');
+
+    // Product import/export (before {product} routes so paths don't collide)
+    Route::get('/api/products/template', [ProductImportExportController::class, 'template'])->name('api.products.template');
+    Route::post('/api/products/import/preview', [ProductImportExportController::class, 'importPreview'])->name('api.products.import.preview');
+    Route::post('/api/products/import/commit', [ProductImportExportController::class, 'importCommit'])->name('api.products.import.commit');
+    Route::get('/api/products/export', [ProductImportExportController::class, 'export'])->name('api.products.export');
+
+    // Product price history
+    Route::get('/api/products/{product}/prices', [ProductController::class, 'prices'])->name('api.products.prices');
+    Route::post('/api/products/{product}/prices', [ProductController::class, 'addPrice'])->name('api.products.prices.add');
+    Route::delete('/api/products/{product}/prices/{priceId}', [ProductController::class, 'deletePrice'])->name('api.products.prices.delete');
+
+    // Categories & brands
+    Route::get('/api/catalog', [CatalogController::class, 'index'])->name('api.catalog.index');
+    Route::post('/api/categories', [CatalogController::class, 'storeCategory'])->name('api.categories.store');
+    Route::put('/api/categories/{category}', [CatalogController::class, 'updateCategory'])->name('api.categories.update');
+    Route::delete('/api/categories/{category}', [CatalogController::class, 'destroyCategory'])->name('api.categories.destroy');
+    Route::post('/api/brands', [CatalogController::class, 'storeBrand'])->name('api.brands.store');
+    Route::put('/api/brands/{brand}', [CatalogController::class, 'updateBrand'])->name('api.brands.update');
+    Route::delete('/api/brands/{brand}', [CatalogController::class, 'destroyBrand'])->name('api.brands.destroy');
+
+    // Leads, settings, analytics
+    Route::get('/api/leads', [LeadController::class, 'index'])->name('api.leads.index');
+    Route::delete('/api/leads/{lead}', [LeadController::class, 'destroy'])->name('api.leads.destroy');
+    Route::get('/api/settings', [SettingController::class, 'index'])->name('api.settings.index');
+    Route::put('/api/settings', [SettingController::class, 'update'])->name('api.settings.update');
+    Route::get('/api/analytics/store', [AnalyticsController::class, 'store'])->name('api.analytics.store');
 
     // Products API
     Route::get('/api/products', [ProductController::class, 'index'])->name('api.products.index');

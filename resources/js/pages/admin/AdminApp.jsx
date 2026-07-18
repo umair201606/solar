@@ -10,6 +10,10 @@ const Store = lazy(() => import("./Store"));
 const ProductEditor = lazy(() => import("./ProductEditor"));
 const Certificates = lazy(() => import("./Certificates"));
 const CertificateEditor = lazy(() => import("./CertificateEditor"));
+const ImportManager = lazy(() => import("./ImportManager"));
+const Leads = lazy(() => import("./Leads"));
+const Catalog = lazy(() => import("./Catalog"));
+const Settings = lazy(() => import("./Settings"));
 
 const AdminLoader = () => (
   <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -42,6 +46,10 @@ export default function AdminApp() {
             <Route path="store" element={<Store />} />
             <Route path="store/new" element={<ProductEditor />} />
             <Route path="store/:id/edit" element={<ProductEditor />} />
+            <Route path="store/import" element={<ImportManager />} />
+            <Route path="leads" element={<Leads />} />
+            <Route path="catalog" element={<Catalog />} />
+            <Route path="settings" element={<Settings />} />
             <Route path="certificates" element={<Certificates />} />
             <Route path="certificates/new" element={<CertificateEditor />} />
           </Route>
