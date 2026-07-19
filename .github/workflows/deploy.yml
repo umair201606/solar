@@ -10,17 +10,15 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Add host to known_hosts
-        run: ssh-keyscan -H 34.18.23.219 >> ~/.ssh/known_hosts
-
       - name: Deploy to GCP
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          ssh ubuntu@34.18.23.219 "
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 34.18.23.219 >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh -o StrictHostKeyChecking=no ubuntu@34.18.23.219 "
             cd /var/www/solar &&
             git pull origin main &&
             composer install --no-dev --optimize-autoloader &&
