@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendPriceAlerts;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
@@ -344,6 +345,9 @@ class ProductImportExportController extends Controller
                 $created++;
             }
         }
+
+        // One coalesced alert run for every price the import moved.
+        SendPriceAlerts::afterPriceChange();
 
         return response()->json([
             'created' => $created,

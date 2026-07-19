@@ -8,6 +8,7 @@ import CaseStudies from "../components/home/CaseStudies";
 import CTA from "../components/home/CTA";
 import Blog from "../components/home/Blog";
 import Testimonials from "../components/projects/Testimonials";
+import PriceAlertBanner from "../components/store/PriceAlertBanner";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <Testimonials />
       <CTA />
       <Blog />
+      <PriceAlertBanner />
     </>
   );
 }

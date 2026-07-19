@@ -3,7 +3,7 @@ import { router } from "@inertiajs/react";
 import { useState } from "react";
 import {
   LayoutDashboard, FolderOpen, Package, Image, Award, LogOut, Menu, X,
-  PhoneCall, Tags, Settings as SettingsIcon, Handshake,
+  PhoneCall, Tags, Settings as SettingsIcon, Handshake, Bell,
 } from "lucide-react";
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { to: "/projects", label: "Projects", icon: FolderOpen },
   { to: "/store", label: "Store", icon: Package },
   { to: "/leads", label: "Leads", icon: PhoneCall },
+  { to: "/push-alerts", label: "Price Alerts", icon: Bell },
   { to: "/crm", label: "CRM", icon: Handshake },
   { to: "/catalog", label: "Brands & Categories", icon: Tags },
   { to: "/certificates", label: "Certificates", icon: Award },

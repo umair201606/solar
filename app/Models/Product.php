@@ -21,6 +21,7 @@ class Product extends Model
             'internal_price' => 'decimal:2',
             'power_kw' => 'decimal:2',
             'is_published' => 'boolean',
+            'price_alert_dirty' => 'boolean',
         ];
     }
 
@@ -49,11 +50,22 @@ class Product extends Model
      */
     public function recordPrice(float $price, ?string $date = null, string $source = 'manual', ?float $internalPrice = null): void
     {
+        $oldPrice = $this->price !== null ? (float) $this->price : null;
+
         $this->priceHistories()->updateOrCreate(
             ['recorded_on' => $date ?: now()->toDateString()],
             ['price' => $price, 'internal_price' => $internalPrice, 'source' => $source],
         );
         $this->refreshTrend();
+
+        $newPrice = $this->price !== null ? (float) $this->price : null;
+
+        // Flag for the price-alert push job, but only on a genuine change to an
+        // already-priced product (a brand-new product's first price isn't an alert).
+        if ($oldPrice !== null && $newPrice !== null
+            && abs($newPrice - $oldPrice) > 0.001 && ! $this->price_alert_dirty) {
+            $this->forceFill(['price_alert_dirty' => true])->saveQuietly();
+        }
     }
 
     /**
