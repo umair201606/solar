@@ -67,7 +67,8 @@ export default function Certificates() {
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto overflow-y-auto max-h-[60vh] sm:max-h-none">
+          <table className="w-full min-w-[680px]">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50">
                 <th className="text-left px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Reference</th>
@@ -128,6 +129,7 @@ export default function Certificates() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
