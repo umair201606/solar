@@ -9,9 +9,9 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 
 /**
- * Flushes pending price-change alerts (see PriceAlertNotifier). Idempotent:
- * with nothing dirty it does nothing, so it is safe to run after each price
- * edit/import and on the schedule.
+ * Flushes the instant "on price change" alerts (see PriceAlertNotifier).
+ * Idempotent: with nothing dirty it does nothing, so it is safe to run after
+ * each price edit/import.
  */
 class SendPriceAlerts implements ShouldQueue
 {
@@ -29,14 +29,14 @@ class SendPriceAlerts implements ShouldQueue
     }
 
     /**
-     * Called after a price change. In the default "immediate" mode the alert
-     * goes out right away (after the response is sent, so no queue worker is
-     * required); in "scheduled"/"manual" modes the change waits for the timed
-     * run or the admin's Send-now button.
+     * Called after a price change. Fires the instant alert only when the
+     * "notify on price change" toggle is on; the scheduled digest is a separate,
+     * independent trigger (see routes/console.php). Runs after the response, so
+     * no queue worker is required.
      */
     public static function afterPriceChange(): void
     {
-        if (Setting::get('push_alert_mode', 'immediate') === 'immediate') {
+        if (Setting::get('push_alert_on_change', '1') === '1') {
             self::dispatchAfterResponse();
         }
     }

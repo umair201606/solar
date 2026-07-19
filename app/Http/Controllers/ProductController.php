@@ -153,9 +153,8 @@ class ProductController extends Controller
     {
         $new = $product->price !== null ? (float) $product->price : null;
 
-        if ($oldPrice !== null && $new !== null
-            && abs($new - $oldPrice) > 0.001 && ! $product->price_alert_dirty) {
-            $product->forceFill(['price_alert_dirty' => true])->saveQuietly();
+        if ($oldPrice !== null && $new !== null && abs($new - $oldPrice) > 0.001) {
+            $product->markPriceChanged();
             SendPriceAlerts::afterPriceChange();
         }
     }

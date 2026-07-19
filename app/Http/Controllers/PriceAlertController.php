@@ -88,7 +88,8 @@ class PriceAlertController extends Controller
     {
         return response()->json([
             'configured' => WebPushSender::configured(),
-            'mode' => Setting::get('push_alert_mode', 'immediate'),
+            'on_change' => Setting::get('push_alert_on_change', '1') === '1',
+            'scheduled' => Setting::get('push_alert_scheduled', '0') === '1',
             'time' => Setting::get('push_alert_time', '18:00'),
             'subscribers' => PriceAlertSubscription::where('is_active', true)->count(),
             'pending' => Product::where('price_alert_dirty', true)->where('is_published', true)->count(),
@@ -99,19 +100,21 @@ class PriceAlertController extends Controller
     }
 
     /**
-     * Set when customers get pushed:
-     *  - immediate: as soon as a price changes (default)
-     *  - scheduled: batched, sent daily at `time`
-     *  - manual: only when the admin hits Send now
+     * Two independent triggers, each on/off:
+     *  - on_change: push instantly whenever a price changes
+     *  - scheduled: push a daily digest at `time`
+     * Both can be on at once, both off, or either one.
      */
     public function adminUpdate(Request $request)
     {
         $data = $request->validate([
-            'mode' => ['required', Rule::in(['immediate', 'scheduled', 'manual'])],
+            'on_change' => ['required', 'boolean'],
+            'scheduled' => ['required', 'boolean'],
             'time' => ['nullable', 'date_format:H:i'],
         ]);
 
-        Setting::set('push_alert_mode', $data['mode']);
+        Setting::set('push_alert_on_change', $data['on_change'] ? '1' : '0');
+        Setting::set('push_alert_scheduled', $data['scheduled'] ? '1' : '0');
         if (! empty($data['time'])) {
             Setting::set('push_alert_time', $data['time']);
         }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
-  Loader2, Bell, Users, Clock, Send, Zap, CalendarClock, Hand,
+  Loader2, Bell, Users, Clock, Send, Zap, CalendarClock,
   CheckCircle2, AlertTriangle, Megaphone,
 } from "lucide-react";
 
@@ -19,15 +19,43 @@ function StatCard({ icon: Icon, tile, value, label }) {
   );
 }
 
-const MODES = [
-  { val: "immediate", label: "On price change", icon: Zap, hint: "Send instantly whenever a price changes (default)." },
-  { val: "scheduled", label: "Scheduled daily", icon: CalendarClock, hint: "Batch changes and send once a day at a set time." },
-  { val: "manual", label: "Manual only", icon: Hand, hint: "Only send when you press Send now." },
-];
+function Toggle({ on, onChange }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!on)}
+      className={`relative w-12 h-7 rounded-full transition shrink-0 ${on ? "bg-emerald-600" : "bg-gray-300"}`}
+      aria-pressed={on}
+    >
+      <span
+        className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform ${on ? "translate-x-5" : ""}`}
+      />
+    </button>
+  );
+}
+
+function TriggerRow({ icon: Icon, label, hint, on, onToggle, children }) {
+  return (
+    <div className={`rounded-2xl border p-4 transition ${on ? "border-emerald-600/40 bg-emerald-600/5" : "border-gray-200"}`}>
+      <div className="flex items-center gap-3">
+        <span className={`w-10 h-10 rounded-xl grid place-items-center shrink-0 ${on ? "bg-emerald-600/10 text-emerald-600" : "bg-gray-100 text-gray-400"}`}>
+          <Icon className="w-5 h-5" />
+        </span>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-[#041a12]">{label}</p>
+          <p className="text-xs text-gray-500 leading-snug">{hint}</p>
+        </div>
+        <Toggle on={on} onChange={onToggle} />
+      </div>
+      {on && children ? <div className="pl-[52px] mt-3">{children}</div> : null}
+    </div>
+  );
+}
 
 export default function PushAlerts() {
   const [data, setData] = useState(null);
-  const [mode, setMode] = useState("immediate");
+  const [onChange, setOnChange] = useState(true);
+  const [scheduled, setScheduled] = useState(false);
   const [time, setTime] = useState("18:00");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -41,7 +69,8 @@ export default function PushAlerts() {
   const load = () =>
     axios.get("/api/push/alerts").then(({ data }) => {
       setData(data);
-      setMode(data.mode);
+      setOnChange(data.on_change);
+      setScheduled(data.scheduled);
       setTime(data.time || "18:00");
     });
 
@@ -51,7 +80,7 @@ export default function PushAlerts() {
     setSaving(true);
     setSaved(false);
     try {
-      await axios.put("/api/push/alerts", { mode, time });
+      await axios.put("/api/push/alerts", { on_change: onChange, scheduled, time });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
       load();
@@ -122,41 +151,42 @@ export default function PushAlerts() {
         />
       </div>
 
-      {/* delivery mode */}
+      {/* delivery triggers */}
       <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
-        <h2 className="font-black text-[#041a12]">When to notify</h2>
-        <div className="grid sm:grid-cols-3 gap-3">
-          {MODES.map((m) => {
-            const Icon = m.icon;
-            const on = mode === m.val;
-            return (
-              <button
-                key={m.val}
-                onClick={() => setMode(m.val)}
-                className={`text-left p-4 rounded-2xl border transition ${
-                  on ? "border-emerald-600 bg-emerald-600/5 ring-1 ring-emerald-600" : "border-gray-200 hover:border-emerald-600"
-                }`}
-              >
-                <Icon className={`w-5 h-5 mb-2 ${on ? "text-emerald-600" : "text-gray-400"}`} />
-                <p className="text-sm font-bold text-[#041a12]">{m.label}</p>
-                <p className="text-xs text-gray-500 mt-0.5 leading-snug">{m.hint}</p>
-              </button>
-            );
-          })}
+        <div>
+          <h2 className="font-black text-[#041a12]">When to notify</h2>
+          <p className="text-sm text-gray-500">
+            Two independent triggers — turn on either, both, or neither.
+          </p>
         </div>
 
-        {mode === "scheduled" && (
-          <div className="flex items-center gap-3 pt-1">
-            <label className="text-sm font-bold text-gray-600">Send daily at</label>
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 outline-none"
-            />
-            <span className="text-xs text-gray-400">server time</span>
-          </div>
-        )}
+        <div className="space-y-3">
+          <TriggerRow
+            icon={Zap}
+            label="Notify on price change"
+            hint="Push instantly whenever a matching product's price changes."
+            on={onChange}
+            onToggle={setOnChange}
+          />
+          <TriggerRow
+            icon={CalendarClock}
+            label="Scheduled daily digest"
+            hint="Once a day, push a summary of that day's price changes."
+            on={scheduled}
+            onToggle={setScheduled}
+          >
+            <div className="flex items-center gap-3">
+              <label className="text-sm font-bold text-gray-600">Send daily at</label>
+              <input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 outline-none"
+              />
+              <span className="text-xs text-gray-400">server time</span>
+            </div>
+          </TriggerRow>
+        </div>
 
         <div className="flex items-center gap-3 pt-1">
           <button

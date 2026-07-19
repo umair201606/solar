@@ -22,6 +22,7 @@ class Product extends Model
             'power_kw' => 'decimal:2',
             'is_published' => 'boolean',
             'price_alert_dirty' => 'boolean',
+            'price_changed_at' => 'datetime',
         ];
     }
 
@@ -60,12 +61,24 @@ class Product extends Model
 
         $newPrice = $this->price !== null ? (float) $this->price : null;
 
-        // Flag for the price-alert push job, but only on a genuine change to an
+        // Record for the price-alert paths, but only on a genuine change to an
         // already-priced product (a brand-new product's first price isn't an alert).
-        if ($oldPrice !== null && $newPrice !== null
-            && abs($newPrice - $oldPrice) > 0.001 && ! $this->price_alert_dirty) {
-            $this->forceFill(['price_alert_dirty' => true])->saveQuietly();
+        if ($oldPrice !== null && $newPrice !== null && abs($newPrice - $oldPrice) > 0.001) {
+            $this->markPriceChanged();
         }
+    }
+
+    /**
+     * Note that this product's price just changed. Sets the dirty flag consumed
+     * by the instant-alert path and the timestamp read by the scheduled digest,
+     * so the two alert triggers stay independent.
+     */
+    public function markPriceChanged(): void
+    {
+        $this->forceFill([
+            'price_alert_dirty' => true,
+            'price_changed_at' => now(),
+        ])->saveQuietly();
     }
 
     /**
