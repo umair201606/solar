@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendPriceAlerts;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -73,6 +74,7 @@ class ProductController extends Controller
 
         if ($priceChanged) {
             $product->recordPrice($newPrice, $data['price_date'] ?? null, 'manual', isset($data['internal_price']) ? (float) $data['internal_price'] : null);
+            SendPriceAlerts::afterPriceChange();
         }
 
         $product->media()->detach();
@@ -105,6 +107,7 @@ class ProductController extends Controller
         ]);
 
         $product->recordPrice((float) $data['price'], $data['recorded_on'] ?? null, 'manual', isset($data['internal_price']) ? (float) $data['internal_price'] : null);
+        SendPriceAlerts::afterPriceChange();
 
         return response()->json($product->priceHistories()->get(), 201);
     }
@@ -117,6 +120,8 @@ class ProductController extends Controller
             'recorded_on' => 'nullable|date',
         ]);
 
+        $oldPrice = $product->price !== null ? (float) $product->price : null;
+
         $product->priceHistories()->whereKey($priceId)->update([
             'price' => $data['price'],
             'internal_price' => $data['internal_price'] ?? null,
@@ -124,16 +129,34 @@ class ProductController extends Controller
         ]);
 
         $product->refreshTrend();
+        $this->flagPriceChange($product, $oldPrice);
 
         return response()->json($product->priceHistories()->get());
     }
 
     public function deletePrice(Product $product, int $priceId)
     {
+        $oldPrice = $product->price !== null ? (float) $product->price : null;
+
         $product->priceHistories()->whereKey($priceId)->delete();
         $product->refreshTrend();
+        $this->flagPriceChange($product, $oldPrice);
 
         return response()->json($product->priceHistories()->get());
+    }
+
+    /**
+     * Editing/deleting a history point bypasses recordPrice(), so flag a real
+     * change to the current price here and let the alert job pick it up.
+     */
+    private function flagPriceChange(Product $product, ?float $oldPrice): void
+    {
+        $new = $product->price !== null ? (float) $product->price : null;
+
+        if ($oldPrice !== null && $new !== null && abs($new - $oldPrice) > 0.001) {
+            $product->markPriceChanged();
+            SendPriceAlerts::afterPriceChange();
+        }
     }
 
     private function syncMedia(Product $product, array $data): void

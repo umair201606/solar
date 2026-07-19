@@ -14,6 +14,7 @@ const ImportManager = lazy(() => import("./ImportManager"));
 const Crm = lazy(() => import("./Crm"));
 const CrmProjectEditor = lazy(() => import("./CrmProjectEditor"));
 const Leads = lazy(() => import("./Leads"));
+const PushAlerts = lazy(() => import("./PushAlerts"));
 const Catalog = lazy(() => import("./Catalog"));
 const Settings = lazy(() => import("./Settings"));
 
@@ -50,6 +51,7 @@ export default function AdminApp() {
             <Route path="store/:id/edit" element={<ProductEditor />} />
             <Route path="store/import" element={<ImportManager />} />
             <Route path="leads" element={<Leads />} />
+            <Route path="push-alerts" element={<PushAlerts />} />
             <Route path="crm" element={<Crm />} />
             <Route path="crm/projects/new" element={<CrmProjectEditor />} />
             <Route path="crm/projects/:id/edit" element={<CrmProjectEditor />} />

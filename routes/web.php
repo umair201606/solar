@@ -15,6 +15,7 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ProductImportExportController;
 use App\Http\Controllers\CrmController;
 use App\Http\Controllers\ClientPortalController;
+use App\Http\Controllers\PriceAlertController;
 
 // Public routes
 Route::inertia('/', 'Home')->name('home');
@@ -30,6 +31,11 @@ Route::get('/blog/{slug}', fn (string $slug) => Inertia::render('BlogDetail', ['
 Route::get('/api/store/products', [StoreController::class, 'products'])->name('api.store.products');
 Route::post('/api/store/products/{product}/contact-click', [StoreController::class, 'contactClick'])->name('api.store.contact');
 Route::post('/api/store/track', [StoreController::class, 'track'])->name('api.store.track');
+
+// Public price-alert push subscriptions (store visitors opt in with filters)
+Route::get('/api/store/alerts/config', [PriceAlertController::class, 'config'])->name('api.store.alerts.config');
+Route::post('/api/store/alerts/subscribe', [PriceAlertController::class, 'subscribe'])->name('api.store.alerts.subscribe');
+Route::post('/api/store/alerts/unsubscribe', [PriceAlertController::class, 'unsubscribe'])->name('api.store.alerts.unsubscribe');
 
 // Public certificate verification (QR code target) + PDF download
 Route::get('/verify/{uuid}', [CertificateController::class, 'verify'])->name('certificate.verify');
@@ -106,6 +112,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/crm/projects/{crmProject}', [CrmController::class, 'showProject'])->name('api.crm.projects.show');
     Route::put('/api/crm/projects/{crmProject}', [CrmController::class, 'updateProject'])->name('api.crm.projects.update');
     Route::delete('/api/crm/projects/{crmProject}', [CrmController::class, 'destroyProject'])->name('api.crm.projects.destroy');
+
+    // Price-alert push admin: subscriber stats, send-now button, schedule settings
+    Route::get('/api/push/alerts', [PriceAlertController::class, 'adminIndex'])->name('api.push.alerts');
+    Route::put('/api/push/alerts', [PriceAlertController::class, 'adminUpdate'])->name('api.push.alerts.update');
+    Route::post('/api/push/alerts/send', [PriceAlertController::class, 'adminSend'])->name('api.push.alerts.send');
 
     // Leads, settings, analytics
     Route::get('/api/leads', [LeadController::class, 'index'])->name('api.leads.index');

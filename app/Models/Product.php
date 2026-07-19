@@ -21,6 +21,8 @@ class Product extends Model
             'internal_price' => 'decimal:2',
             'power_kw' => 'decimal:2',
             'is_published' => 'boolean',
+            'price_alert_dirty' => 'boolean',
+            'price_changed_at' => 'datetime',
         ];
     }
 
@@ -49,11 +51,34 @@ class Product extends Model
      */
     public function recordPrice(float $price, ?string $date = null, string $source = 'manual', ?float $internalPrice = null): void
     {
+        $oldPrice = $this->price !== null ? (float) $this->price : null;
+
         $this->priceHistories()->updateOrCreate(
             ['recorded_on' => $date ?: now()->toDateString()],
             ['price' => $price, 'internal_price' => $internalPrice, 'source' => $source],
         );
         $this->refreshTrend();
+
+        $newPrice = $this->price !== null ? (float) $this->price : null;
+
+        // Record for the price-alert paths, but only on a genuine change to an
+        // already-priced product (a brand-new product's first price isn't an alert).
+        if ($oldPrice !== null && $newPrice !== null && abs($newPrice - $oldPrice) > 0.001) {
+            $this->markPriceChanged();
+        }
+    }
+
+    /**
+     * Note that this product's price just changed. Sets the dirty flag consumed
+     * by the instant-alert path and the timestamp read by the scheduled digest,
+     * so the two alert triggers stay independent.
+     */
+    public function markPriceChanged(): void
+    {
+        $this->forceFill([
+            'price_alert_dirty' => true,
+            'price_changed_at' => now(),
+        ])->saveQuietly();
     }
 
     /**
