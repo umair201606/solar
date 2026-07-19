@@ -17,7 +17,9 @@ class ProductSeeder extends Seeder
         $path = database_path('seeders/data/products.json');
         $products = json_decode(file_get_contents($path), true);
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        if (DB::connection()->getDriverName() !== 'sqlite') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        }
 
         foreach (array_chunk($products, 100) as $chunk) {
             $rows = array_map(fn ($p) => [
@@ -45,7 +47,9 @@ class ProductSeeder extends Seeder
             DB::table('products')->insert($rows);
         }
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        if (DB::connection()->getDriverName() !== 'sqlite') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        }
 
         $this->command?->info(count($products).' products seeded.');
     }
