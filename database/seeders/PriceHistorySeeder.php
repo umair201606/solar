@@ -2,58 +2,35 @@
 
 namespace Database\Seeders;
 
-use App\Models\Product;
-use App\Models\ProductPriceHistory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PriceHistorySeeder extends Seeder
 {
-    /**
-     * Loads dated price points extracted from the Solarkon WhatsApp
-     * channel (database/seeders/data/price_history.json) and refreshes
-     * each product's current price / trend from its history.
-     */
     public function run(): void
     {
         $path = database_path('seeders/data/price_history.json');
         $entries = json_decode(file_get_contents($path), true);
 
-        $products = Product::query()->pluck('id', 'slug');
-        $missing = [];
-        $rows = [];
-        $now = now();
-
-        foreach ($entries as $entry) {
-            $productId = $products[$entry['slug']] ?? null;
-            if (! $productId) {
-                $missing[$entry['slug']] = true;
-                continue;
-            }
-            $rows[] = [
-                'product_id' => $productId,
-                'price' => $entry['price'],
-                'recorded_on' => $entry['date'],
-                'source' => 'whatsapp',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+        if (DB::table('product_price_histories')->count() > 0) {
+            $this->command?->info('Price history already seeded, skipping.');
+            return;
         }
 
-        foreach (array_chunk($rows, 500) as $chunk) {
-            ProductPriceHistory::query()->upsert(
-                $chunk,
-                ['product_id', 'recorded_on'],
-                ['price', 'source', 'updated_at'],
-            );
+        foreach (array_chunk($entries, 500) as $chunk) {
+            $rows = array_map(fn ($e) => [
+                'product_id'     => $e['product_id'],
+                'price'          => $e['price'],
+                'internal_price' => $e['internal_price'] ?? null,
+                'recorded_on'    => $e['recorded_on'],
+                'source'         => $e['source'] ?? 'whatsapp',
+                'created_at'     => $e['created_at'],
+                'updated_at'     => $e['updated_at'],
+            ], $chunk);
+
+            DB::table('product_price_histories')->insert($rows);
         }
 
-        Product::query()->whereIn('slug', array_keys($products->all()))
-            ->get()
-            ->each(fn (Product $product) => $product->refreshTrend());
-
-        if ($missing) {
-            $this->command?->warn('No product for slugs: '.implode(', ', array_keys($missing)));
-        }
-        $this->command?->info(count($rows).' price points loaded.');
+        $this->command?->info(count($entries).' price history entries seeded.');
     }
 }

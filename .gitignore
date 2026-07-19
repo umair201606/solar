@@ -66,6 +66,9 @@ yarn-error.log
 /.vscode
 /.zed
 
+# Temp DB export files
+tmp_*.json
+
 # macOS metadata
 .DS_Store
 **/.DS_Store
