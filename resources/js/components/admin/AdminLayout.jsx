@@ -3,14 +3,19 @@ import { router } from "@inertiajs/react";
 import { useState } from "react";
 import {
   LayoutDashboard, FolderOpen, Package, Image, Award, LogOut, Menu, X,
+  PhoneCall, Tags, Settings as SettingsIcon, Handshake,
 } from "lucide-react";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/projects", label: "Projects", icon: FolderOpen },
   { to: "/store", label: "Store", icon: Package },
+  { to: "/leads", label: "Leads", icon: PhoneCall },
+  { to: "/crm", label: "CRM", icon: Handshake },
+  { to: "/catalog", label: "Brands & Categories", icon: Tags },
   { to: "/certificates", label: "Certificates", icon: Award },
   { to: "/media", label: "Media", icon: Image },
+  { to: "/settings", label: "Settings", icon: SettingsIcon },
 ];
 
 export default function AdminLayout() {

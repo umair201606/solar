@@ -3,9 +3,9 @@ import Footer from "../components/Footer"
 
 export default function Layout({ children }) {
     const { url } = usePage()
-    const isAdmin = url.startsWith("/admin")
+    const isBare = url.startsWith("/admin") || url.startsWith("/portal")
 
-    if (isAdmin) {
+    if (isBare) {
         return <>{children}</>
     }
 
