@@ -15,6 +15,22 @@ use Illuminate\Http\Request;
  */
 class StoreController extends Controller
 {
+    /**
+     * Default card image for a category when the product has no photo:
+     * per-category image from settings, else the global default.
+     */
+    private function categoryImage(?string $category): ?string
+    {
+        $key = match (true) {
+            str_contains((string) $category, 'Batter') => 'category_image_batteries',
+            str_contains((string) $category, 'Inverter') => 'category_image_inverters',
+            str_contains((string) $category, 'Panel') => 'category_image_panels',
+            default => null,
+        };
+
+        return ($key ? Setting::get($key) : null) ?: Setting::get('default_product_image');
+    }
+
     public function products()
     {
         $products = Product::query()
@@ -42,7 +58,9 @@ class StoreController extends Controller
                     'power_kw' => $product->power_kw !== null ? (float) $product->power_kw : null,
                     'specs' => $product->specs ?: [],
                     'description' => $product->description,
-                    'image' => $main?->url,
+                    'tagline' => $product->tagline,
+                    'image' => $main?->url ?: $this->categoryImage($product->category),
+                    'has_own_image' => (bool) $main,
                     'gallery' => $product->media
                         ->where('pivot.type', 'gallery')
                         ->map(fn ($m) => $m->url)->values(),
@@ -107,9 +125,11 @@ class StoreController extends Controller
             $intl = '92'.substr($intl, 1); // PK local format -> international
         }
 
-        $text = "Hi SEB Solar! I'm interested in: {$product->name}"
+        $text = "Hi Solarkon!"
+            ."\nI'm interested in one of your product listed on website."
+            ."\nProduct: {$product->name}"
             .($product->price ? ' (Rs. '.number_format((float) $product->price).')' : '')
-            ."\n{$url}";
+            ."\nLink: {$url}";
 
         return response()->json([
             'wa_url' => 'https://wa.me/'.$intl.'?text='.rawurlencode($text),

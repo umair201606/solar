@@ -8,9 +8,9 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     protected $fillable = [
-        'slug', 'name', 'category', 'brand', 'price',
+        'slug', 'name', 'category', 'brand', 'price', 'internal_price',
         'price_change', 'trend', 'unit', 'warranty', 'phase', 'power_kw',
-        'whatsapp_number', 'specs', 'description', 'is_published',
+        'whatsapp_number', 'specs', 'description', 'tagline', 'is_published',
     ];
 
     protected function casts(): array
@@ -18,6 +18,7 @@ class Product extends Model
         return [
             'specs' => 'array',
             'price' => 'decimal:2',
+            'internal_price' => 'decimal:2',
             'power_kw' => 'decimal:2',
             'is_published' => 'boolean',
         ];

@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
     // Product price history
     Route::get('/api/products/{product}/prices', [ProductController::class, 'prices'])->name('api.products.prices');
     Route::post('/api/products/{product}/prices', [ProductController::class, 'addPrice'])->name('api.products.prices.add');
+    Route::put('/api/products/{product}/prices/{priceId}', [ProductController::class, 'updatePrice'])->name('api.products.prices.update');
     Route::delete('/api/products/{product}/prices/{priceId}', [ProductController::class, 'deletePrice'])->name('api.products.prices.delete');
 
     // Categories & brands

@@ -11,6 +11,19 @@ export function formatRs(price, unit) {
   return `Rs. ${Math.round(value).toLocaleString("en-US")}`;
 }
 
+// Compact form for chart axes: "Rs. 220k", "Rs. 41.25" (per watt).
+export function formatRsShort(price, unit) {
+  if (price === null || price === undefined || price === "") return "";
+  const value = Number(price);
+  if (Number.isNaN(value)) return "";
+  if (unit === "Per Watt") return `Rs. ${value.toFixed(2)}`;
+  if (value >= 1000) {
+    const k = value / 1000;
+    return `Rs. ${k.toLocaleString("en-US", { maximumFractionDigits: k >= 100 ? 0 : 1 })}k`;
+  }
+  return `Rs. ${Math.round(value)}`;
+}
+
 export function formatDate(iso) {
   if (!iso) return "";
   const d = new Date(iso + (iso.length === 10 ? "T00:00:00" : ""));

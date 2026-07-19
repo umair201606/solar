@@ -20,7 +20,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>SEB Solar — Product Price List</h1>
+        <h1>Solarkon — Product Price List</h1>
         <p>
             Generated {{ $generatedAt->format('d M Y, h:i A') }} &nbsp;|&nbsp; {{ $products->count() }} products
             @if(!empty($filters))
@@ -70,7 +70,7 @@
     </table>
 
     <div class="footer">
-        SEB Solar — Trusted Solar Products Trading &amp; Energy Solutions Company &nbsp;|&nbsp; WhatsApp: 0306-6575943
+        Solarkon — Trusted Solar Products Trading &amp; Energy Solutions Company &nbsp;|&nbsp; WhatsApp: 0306-6575943
     </div>
 </body>
 </html>

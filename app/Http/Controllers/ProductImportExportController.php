@@ -32,6 +32,7 @@ class ProductImportExportController extends Controller
         'power_kw' => 'Numeric capacity: kW for inverters, kWh for batteries, e.g. 10',
         'whatsapp_number' => 'Override WhatsApp number — empty = default number',
         'description' => 'Description — empty = default description',
+        'tagline' => 'Short card line — e.g. Best for residential & small commercial solar systems',
         'is_published' => 'yes / no (empty = yes)',
     ];
 
@@ -76,10 +77,10 @@ class ProductImportExportController extends Controller
         $sheet->fromArray(array_values($columns), null, 'A2');
 
         $example = match ($type) {
-            'batteries' => ['Soluna 10kWh IP65 Lithium Battery', 'Lithium Batteries', 'Soluna', 590000, now()->toDateString(), '10kWh', '10 Years', '', 10, '', '', 'yes', '51.2V', '200Ah', 'IP65', '8000+'],
-            'inverters' => ['Goodwe 10kW 1-Ph Hybrid Inverter', 'Hybrid Inverters', 'Goodwe', 405000, now()->toDateString(), '10kW', '5 Years', 'Single Phase', 10, '', '', 'yes', 'Hybrid', 'IP65', 'GW10K-ET'],
-            'panels' => ['Jinko 590W Solar Panel', 'Solar Panels', 'Jinko', 44.00, now()->toDateString(), 'Per Watt', '', '', 0.59, '', '', 'yes', '590W', 'N-Type Mono', 'A Grade'],
-            default => ['Goodwe 10kW 1-Ph Hybrid Inverter', 'Hybrid Inverters', 'Goodwe', 405000, now()->toDateString(), '10kW', '5 Years', 'Single Phase', 10, '', '', 'yes', 'Type: Hybrid | Protection: IP65'],
+            'batteries' => ['Soluna 10kWh IP65 Lithium Battery', 'Lithium Batteries', 'Soluna', 590000, now()->toDateString(), '10kWh', '10 Years', '', 10, '', '', 'Long-life lithium backup for day & night power', 'yes', '51.2V', '200Ah', 'IP65', '8000+'],
+            'inverters' => ['Goodwe 10kW 1-Ph Hybrid Inverter', 'Hybrid Inverters', 'Goodwe', 405000, now()->toDateString(), '10kW', '5 Years', 'Single Phase', 10, '', '', 'Best for residential & small commercial solar systems', 'yes', 'Hybrid', 'IP65', 'GW10K-ET'],
+            'panels' => ['Jinko 590W Solar Panel', 'Solar Panels', 'Jinko', 44.00, now()->toDateString(), 'Per Watt', '', '', 0.59, '', '', 'High-efficiency Tier-1 module — priced per watt', 'yes', '590W', 'N-Type Mono', 'A Grade'],
+            default => ['Goodwe 10kW 1-Ph Hybrid Inverter', 'Hybrid Inverters', 'Goodwe', 405000, now()->toDateString(), '10kW', '5 Years', 'Single Phase', 10, '', '', 'Best for residential & small commercial solar systems', 'yes', 'Type: Hybrid | Protection: IP65'],
         };
         $sheet->fromArray($example, null, 'A3');
 
@@ -176,6 +177,7 @@ class ProductImportExportController extends Controller
                     'power_kw' => is_numeric($row['power_kw'] ?? null) ? (float) $row['power_kw'] : null,
                     'whatsapp_number' => trim((string) ($row['whatsapp_number'] ?? '')) ?: null,
                     'description' => trim((string) ($row['description'] ?? '')) ?: null,
+                    'tagline' => trim((string) ($row['tagline'] ?? '')) ?: null,
                     'is_published' => ! in_array(strtolower(trim((string) ($row['is_published'] ?? ''))), ['no', 'false', '0'], true),
                     'specs' => $specs,
                 ],
@@ -218,6 +220,7 @@ class ProductImportExportController extends Controller
             'rows.*.data.power_kw' => 'nullable|numeric|min:0',
             'rows.*.data.whatsapp_number' => 'nullable|string|max:30',
             'rows.*.data.description' => 'nullable|string',
+            'rows.*.data.tagline' => 'nullable|string|max:255',
             'rows.*.data.is_published' => 'boolean',
             'rows.*.data.specs' => 'nullable|array',
         ]);
@@ -333,7 +336,7 @@ class ProductImportExportController extends Controller
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Products');
-        $headers = ['name', 'category', 'brand', 'price', 'price_date', 'unit', 'warranty', 'phase', 'power_kw', 'whatsapp_number', 'description', 'is_published', 'specs', 'trend', 'price_change'];
+        $headers = ['name', 'category', 'brand', 'price', 'price_date', 'unit', 'warranty', 'phase', 'power_kw', 'whatsapp_number', 'description', 'tagline', 'is_published', 'specs', 'trend', 'price_change'];
         $sheet->fromArray($headers, null, 'A1');
 
         $r = 2;
@@ -344,7 +347,7 @@ class ProductImportExportController extends Controller
                 $p->priceHistories()->reorder('recorded_on', 'desc')->value('recorded_on'),
                 $p->unit, $p->warranty, $p->phase,
                 $p->power_kw !== null ? (float) $p->power_kw : null,
-                $p->whatsapp_number, $p->description,
+                $p->whatsapp_number, $p->description, $p->tagline,
                 $p->is_published ? 'yes' : 'no',
                 implode(' | ', $p->specs ?: []),
                 $p->trend, $p->price_change,

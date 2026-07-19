@@ -12,6 +12,7 @@ class ProductController extends Controller
         'category' => 'required|string|max:255',
         'brand' => 'nullable|string|max:255',
         'price' => 'nullable|numeric|min:0',
+        'internal_price' => 'nullable|numeric|min:0',
         'price_date' => 'nullable|date',
         'unit' => 'nullable|string|max:255',
         'warranty' => 'nullable|string|max:255',
@@ -20,6 +21,7 @@ class ProductController extends Controller
         'whatsapp_number' => 'nullable|string|max:30',
         'specs' => 'nullable|array',
         'description' => 'nullable|string',
+        'tagline' => 'nullable|string|max:255',
         'is_published' => 'boolean',
         'main_image_id' => 'nullable|exists:media,id',
         'gallery_ids' => 'nullable|array',
@@ -101,6 +103,23 @@ class ProductController extends Controller
         $product->recordPrice((float) $data['price'], $data['recorded_on'] ?? null);
 
         return response()->json($product->priceHistories()->get(), 201);
+    }
+
+    public function updatePrice(Request $request, Product $product, int $priceId)
+    {
+        $data = $request->validate([
+            'price' => 'required|numeric|min:0',
+            'recorded_on' => 'nullable|date',
+        ]);
+
+        $product->priceHistories()->whereKey($priceId)->update([
+            'price' => $data['price'],
+            'recorded_on' => $data['recorded_on'] ?? now(),
+        ]);
+
+        $product->refreshTrend();
+
+        return response()->json($product->priceHistories()->get());
     }
 
     public function deletePrice(Product $product, int $priceId)

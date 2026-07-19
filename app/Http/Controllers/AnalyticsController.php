@@ -29,6 +29,22 @@ class AnalyticsController extends Controller
             'leads_total' => ProductLead::query()->where('created_at', '>=', $since)->count(),
         ];
 
+        // Same window immediately before, for "vs previous period" chips.
+        $prevSince = now()->subDays($days * 2)->startOfDay();
+        $prevEvents = StoreEvent::query()
+            ->where('created_at', '>=', $prevSince)
+            ->where('created_at', '<', $since);
+
+        $prevTotals = [
+            'product_views' => (clone $prevEvents)->where('type', 'product_view')->count(),
+            'whatsapp_clicks' => (clone $prevEvents)->where('type', 'whatsapp_click')->count(),
+            'call_clicks' => (clone $prevEvents)->where('type', 'call_click')->count(),
+            'searches' => (clone $prevEvents)->where('type', 'search')->count(),
+            'filter_uses' => (clone $prevEvents)->where('type', 'filter')->count(),
+            'leads_total' => ProductLead::query()
+                ->where('created_at', '>=', $prevSince)->where('created_at', '<', $since)->count(),
+        ];
+
         $metaCounts = function (string $type, string $key) use ($since) {
             return StoreEvent::query()
                 ->where('created_at', '>=', $since)
@@ -73,6 +89,7 @@ class AnalyticsController extends Controller
         return response()->json([
             'days' => $days,
             'totals' => $totals,
+            'prev_totals' => $prevTotals,
             'top_filtered_brands' => $metaCounts('filter', 'brand'),
             'top_filtered_categories' => $metaCounts('filter', 'category'),
             'top_searches' => $metaCounts('search', 'q'),

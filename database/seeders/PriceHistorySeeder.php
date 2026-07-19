@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 class PriceHistorySeeder extends Seeder
 {
     /**
-     * Loads dated price points extracted from the SEB Solar WhatsApp
+     * Loads dated price points extracted from the Solarkon WhatsApp
      * channel (database/seeders/data/price_history.json) and refreshes
      * each product's current price / trend from its history.
      */
