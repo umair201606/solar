@@ -716,7 +716,7 @@ export default function StoreSection() {
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [sort, setSort] = useState("featured");
-  const [showAdvanced, setShowAdvanced] = useState(true);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [trendProduct, setTrendProduct] = useState(null);
 

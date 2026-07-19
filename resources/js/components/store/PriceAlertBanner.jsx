@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell, X, Check, Loader2 } from "lucide-react";
 import axios from "axios";
-import { pushSupported, getSubscription, subscribe } from "../../lib/pushAlerts";
+import { pushSupported, notificationPermission, subscribe } from "../../lib/pushAlerts";
 
 const DISMISS_KEY = "solarkon_price_alert_dismissed";
 const DISMISS_DAYS = 7;
@@ -23,8 +23,9 @@ export default function PriceAlertBanner() {
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // "all" = every price change; "custom" = only the picked filters.
-  const [mode, setMode] = useState("all");
+  // "all" = every price change; "custom" = only the picked filters. Opens on
+  // "custom" so the (fully pre-selected) filters are visible to narrow down.
+  const [mode, setMode] = useState("custom");
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [phase, setPhase] = useState("All");
@@ -33,22 +34,23 @@ export default function PriceAlertBanner() {
   const [status, setStatus] = useState("idle"); // idle | saving | done | denied | error
 
   useEffect(() => {
-    if (!pushSupported() || recentlyDismissed()) return;
+    // Show for anyone who can receive push and hasn't already opted in or
+    // dismissed recently. Note: we do NOT touch the service worker here — that
+    // happens only when they click Enable, so nothing can block the banner.
+    if (!pushSupported() || recentlyDismissed() || notificationPermission() === "granted") return;
 
     let alive = true;
-    (async () => {
-      // Don't nag people who already opted in.
-      if (await getSubscription()) return;
-
-      const { data } = await axios.get("/api/store/alerts/config").catch(() => ({ data: null }));
-      if (!alive || !data?.enabled) return;
-
-      setConfig(data);
-      // Start with everything selected; the visitor narrows by unchecking.
-      setCategories(data.categories || []);
-      setBrands(data.brands || []);
-      setTimeout(() => alive && setVisible(true), 2500);
-    })();
+    axios
+      .get("/api/store/alerts/config")
+      .then(({ data }) => {
+        if (!alive || !data?.enabled) return;
+        setConfig(data);
+        // Start with everything selected; the visitor narrows by unchecking.
+        setCategories(data.categories || []);
+        setBrands(data.brands || []);
+        setTimeout(() => alive && setVisible(true), 2000);
+      })
+      .catch(() => {});
 
     return () => {
       alive = false;
