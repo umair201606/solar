@@ -8,25 +8,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-
       - name: Deploy to GCP
-        env:
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 34.18.23.219 >> ~/.ssh/known_hosts
-          ssh ubuntu@34.18.23.219 "
-            cd /var/www/solar &&
-            git pull origin main &&
-            composer install --no-dev --optimize-autoloader &&
-            npm ci &&
-            npm run build:ssr &&
-            php artisan migrate --force &&
-            php artisan config:cache &&
-            php artisan route:cache &&
-            sudo systemctl restart nginx &&
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: 34.18.23.219
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/solar
+            git pull origin main
+            composer install --no-dev --optimize-autoloader
+            npm ci
+            npm run build:ssr
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            sudo systemctl restart nginx
             sudo systemctl restart solar-ssr
-          "
