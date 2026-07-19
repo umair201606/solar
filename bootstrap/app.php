@@ -18,7 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        $middleware->redirectGuestsTo('/admin/login');
+        $middleware->redirectGuestsTo(fn ($request) => $request->is('portal*') || $request->is('api/portal*')
+            ? '/portal/login'
+            : '/admin/login');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

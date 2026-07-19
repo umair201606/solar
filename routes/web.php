@@ -13,6 +13,8 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ProductImportExportController;
+use App\Http\Controllers\CrmController;
+use App\Http\Controllers\ClientPortalController;
 
 // Public routes
 Route::inertia('/', 'Home')->name('home');
@@ -32,6 +34,19 @@ Route::post('/api/store/track', [StoreController::class, 'track'])->name('api.st
 // Public certificate verification (QR code target) + PDF download
 Route::get('/verify/{uuid}', [CertificateController::class, 'verify'])->name('certificate.verify');
 Route::get('/verify/{uuid}/download', [CertificateController::class, 'download'])->name('certificate.download');
+
+// Client portal (not linked from the public site — URL is shared directly)
+Route::get('/portal/login', fn () => Inertia::render('portal/Login'))->name('portal.login');
+Route::post('/portal/login', [ClientPortalController::class, 'login'])->name('portal.login.post');
+Route::post('/portal/logout', [ClientPortalController::class, 'logout'])->name('portal.logout');
+
+Route::middleware('auth:client')->group(function () {
+    Route::get('/api/portal/projects', [ClientPortalController::class, 'projects'])->name('api.portal.projects');
+    Route::get('/api/portal/projects/{id}', [ClientPortalController::class, 'project'])->name('api.portal.projects.show');
+
+    // Portal SPA entry (after the login route so it doesn't shadow it)
+    Route::get('/portal/{any?}', fn () => Inertia::render('portal/PortalApp'))->where('any', '.*')->name('portal');
+});
 
 // Admin login
 Route::get('/admin/login', fn () => Inertia::render('admin/Login'))->name('admin.login');
@@ -79,6 +94,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/brands', [CatalogController::class, 'storeBrand'])->name('api.brands.store');
     Route::put('/api/brands/{brand}', [CatalogController::class, 'updateBrand'])->name('api.brands.update');
     Route::delete('/api/brands/{brand}', [CatalogController::class, 'destroyBrand'])->name('api.brands.destroy');
+
+    // CRM: clients, client projects, insights
+    Route::get('/api/crm/dashboard', [CrmController::class, 'dashboard'])->name('api.crm.dashboard');
+    Route::get('/api/crm/clients', [CrmController::class, 'clients'])->name('api.crm.clients');
+    Route::post('/api/crm/clients', [CrmController::class, 'storeClient'])->name('api.crm.clients.store');
+    Route::put('/api/crm/clients/{client}', [CrmController::class, 'updateClient'])->name('api.crm.clients.update');
+    Route::delete('/api/crm/clients/{client}', [CrmController::class, 'destroyClient'])->name('api.crm.clients.destroy');
+    Route::get('/api/crm/projects', [CrmController::class, 'projects'])->name('api.crm.projects');
+    Route::post('/api/crm/projects', [CrmController::class, 'storeProject'])->name('api.crm.projects.store');
+    Route::get('/api/crm/projects/{crmProject}', [CrmController::class, 'showProject'])->name('api.crm.projects.show');
+    Route::put('/api/crm/projects/{crmProject}', [CrmController::class, 'updateProject'])->name('api.crm.projects.update');
+    Route::delete('/api/crm/projects/{crmProject}', [CrmController::class, 'destroyProject'])->name('api.crm.projects.destroy');
 
     // Leads, settings, analytics
     Route::get('/api/leads', [LeadController::class, 'index'])->name('api.leads.index');

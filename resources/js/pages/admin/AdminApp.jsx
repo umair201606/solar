@@ -11,6 +11,8 @@ const ProductEditor = lazy(() => import("./ProductEditor"));
 const Certificates = lazy(() => import("./Certificates"));
 const CertificateEditor = lazy(() => import("./CertificateEditor"));
 const ImportManager = lazy(() => import("./ImportManager"));
+const Crm = lazy(() => import("./Crm"));
+const CrmProjectEditor = lazy(() => import("./CrmProjectEditor"));
 const Leads = lazy(() => import("./Leads"));
 const Catalog = lazy(() => import("./Catalog"));
 const Settings = lazy(() => import("./Settings"));
@@ -48,6 +50,9 @@ export default function AdminApp() {
             <Route path="store/:id/edit" element={<ProductEditor />} />
             <Route path="store/import" element={<ImportManager />} />
             <Route path="leads" element={<Leads />} />
+            <Route path="crm" element={<Crm />} />
+            <Route path="crm/projects/new" element={<CrmProjectEditor />} />
+            <Route path="crm/projects/:id/edit" element={<CrmProjectEditor />} />
             <Route path="catalog" element={<Catalog />} />
             <Route path="settings" element={<Settings />} />
             <Route path="certificates" element={<Certificates />} />
