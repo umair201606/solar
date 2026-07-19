@@ -31,7 +31,7 @@ class ProductController extends Controller
     public function index()
     {
         return response()->json(
-            Product::with(['media', 'priceHistories:id,product_id,price,recorded_on'])->latest()->get()
+            Product::with(['media', 'priceHistories:id,product_id,price,internal_price,recorded_on'])->latest()->get()
         );
     }
 
@@ -44,7 +44,7 @@ class ProductController extends Controller
         $product = Product::create(collect($data)->except(['price_date', 'main_image_id', 'gallery_ids'])->all());
 
         if ($data['price'] ?? null) {
-            $product->recordPrice((float) $data['price'], $data['price_date'] ?? null);
+            $product->recordPrice((float) $data['price'], $data['price_date'] ?? null, 'manual', isset($data['internal_price']) ? (float) $data['internal_price'] : null);
         }
 
         $this->syncMedia($product, $data);
@@ -54,7 +54,10 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return response()->json($product->load('media', 'priceHistories'));
+        $data = $product->load('media', 'priceHistories')->toArray();
+        $data['category_default_image'] = (new StoreController)->categoryImage($product->category);
+
+        return response()->json($data);
     }
 
     public function update(Request $request, Product $product)
@@ -69,7 +72,7 @@ class ProductController extends Controller
         $product->update(collect($data)->except(['price_date', 'main_image_id', 'gallery_ids'])->all());
 
         if ($priceChanged) {
-            $product->recordPrice($newPrice, $data['price_date'] ?? null);
+            $product->recordPrice($newPrice, $data['price_date'] ?? null, 'manual', isset($data['internal_price']) ? (float) $data['internal_price'] : null);
         }
 
         $product->media()->detach();
@@ -97,10 +100,11 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'price' => 'required|numeric|min:0',
+            'internal_price' => 'nullable|numeric|min:0',
             'recorded_on' => 'nullable|date',
         ]);
 
-        $product->recordPrice((float) $data['price'], $data['recorded_on'] ?? null);
+        $product->recordPrice((float) $data['price'], $data['recorded_on'] ?? null, 'manual', isset($data['internal_price']) ? (float) $data['internal_price'] : null);
 
         return response()->json($product->priceHistories()->get(), 201);
     }
@@ -109,11 +113,13 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'price' => 'required|numeric|min:0',
+            'internal_price' => 'nullable|numeric|min:0',
             'recorded_on' => 'nullable|date',
         ]);
 
         $product->priceHistories()->whereKey($priceId)->update([
             'price' => $data['price'],
+            'internal_price' => $data['internal_price'] ?? null,
             'recorded_on' => $data['recorded_on'] ?? now(),
         ]);
 

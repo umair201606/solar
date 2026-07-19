@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
 
     // Product import/export (before {product} routes so paths don't collide)
     Route::get('/api/products/template', [ProductImportExportController::class, 'template'])->name('api.products.template');
+    Route::post('/api/products/import/check', [ProductImportExportController::class, 'checkExists'])->name('api.products.import.check');
     Route::post('/api/products/import/preview', [ProductImportExportController::class, 'importPreview'])->name('api.products.import.preview');
     Route::post('/api/products/import/commit', [ProductImportExportController::class, 'importCommit'])->name('api.products.import.commit');
     Route::get('/api/products/export', [ProductImportExportController::class, 'export'])->name('api.products.export');

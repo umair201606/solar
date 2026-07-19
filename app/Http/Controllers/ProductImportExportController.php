@@ -25,6 +25,7 @@ class ProductImportExportController extends Controller
         'category' => 'Category (must exist, or approve as new during import)',
         'brand' => 'Brand (must exist, or approve as new during import)',
         'price' => 'Price in Rs. numbers only — e.g. 410000 (panels: rate per watt e.g. 43.75)',
+        'internal_price' => 'Internal price in Rs. — hidden from store, used for dealer margin calc',
         'price_date' => 'Date this price applies from, YYYY-MM-DD — empty = today',
         'unit' => 'Display unit — e.g. 10kW, 5kWh, Per Watt',
         'warranty' => 'Warranty — e.g. 5 Years',
@@ -77,10 +78,10 @@ class ProductImportExportController extends Controller
         $sheet->fromArray(array_values($columns), null, 'A2');
 
         $example = match ($type) {
-            'batteries' => ['Soluna 10kWh IP65 Lithium Battery', 'Lithium Batteries', 'Soluna', 590000, now()->toDateString(), '10kWh', '10 Years', '', 10, '', '', 'Long-life lithium backup for day & night power', 'yes', '51.2V', '200Ah', 'IP65', '8000+'],
-            'inverters' => ['Goodwe 10kW 1-Ph Hybrid Inverter', 'Hybrid Inverters', 'Goodwe', 405000, now()->toDateString(), '10kW', '5 Years', 'Single Phase', 10, '', '', 'Best for residential & small commercial solar systems', 'yes', 'Hybrid', 'IP65', 'GW10K-ET'],
-            'panels' => ['Jinko 590W Solar Panel', 'Solar Panels', 'Jinko', 44.00, now()->toDateString(), 'Per Watt', '', '', 0.59, '', '', 'High-efficiency Tier-1 module — priced per watt', 'yes', '590W', 'N-Type Mono', 'A Grade'],
-            default => ['Goodwe 10kW 1-Ph Hybrid Inverter', 'Hybrid Inverters', 'Goodwe', 405000, now()->toDateString(), '10kW', '5 Years', 'Single Phase', 10, '', '', 'Best for residential & small commercial solar systems', 'yes', 'Type: Hybrid | Protection: IP65'],
+            'batteries' => ['Soluna 10kWh IP65 Lithium Battery', 'Lithium Batteries', 'Soluna', 590000, 550000, now()->toDateString(), '10kWh', '10 Years', '', 10, '', '', 'Long-life lithium backup for day & night power', 'yes', '51.2V', '200Ah', 'IP65', '8000+'],
+            'inverters' => ['Goodwe 10kW 1-Ph Hybrid Inverter', 'Hybrid Inverters', 'Goodwe', 405000, 380000, now()->toDateString(), '10kW', '5 Years', 'Single Phase', 10, '', '', 'Best for residential & small commercial solar systems', 'yes', 'Hybrid', 'IP65', 'GW10K-ET'],
+            'panels' => ['Jinko 590W Solar Panel', 'Solar Panels', 'Jinko', 44.00, 40.00, now()->toDateString(), 'Per Watt', '', '', 0.59, '', '', 'High-efficiency Tier-1 module — priced per watt', 'yes', '590W', 'N-Type Mono', 'A Grade'],
+            default => ['Goodwe 10kW 1-Ph Hybrid Inverter', 'Hybrid Inverters', 'Goodwe', 405000, 380000, now()->toDateString(), '10kW', '5 Years', 'Single Phase', 10, '', '', 'Best for residential & small commercial solar systems', 'yes', 'Type: Hybrid | Protection: IP65'],
         };
         $sheet->fromArray($example, null, 'A3');
 
@@ -98,6 +99,54 @@ class ProductImportExportController extends Controller
     }
 
     /**
+     * Real-time check: given a row's name/brand/category/specs, return
+     * whether a matching product exists in the database.
+     */
+    public function checkExists(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'brand' => 'nullable|string|max:255',
+            'category' => 'nullable|string|max:255',
+            'unit' => 'nullable|string|max:255',
+            'warranty' => 'nullable|string|max:255',
+            'phase' => 'nullable|string|max:255',
+            'power_kw' => 'nullable|numeric',
+            'specs' => 'nullable|array',
+        ]);
+
+        $slug = Str::slug($request->input('name'));
+        $existing = Product::query()
+            ->where('slug', $slug)
+            ->first(['id', 'name', 'brand', 'category', 'unit', 'warranty', 'phase', 'power_kw', 'specs', 'price']);
+
+        if (! $existing) {
+            return response()->json(['exists' => false]);
+        }
+
+        $allMatch = $this->specsMatch(
+            $existing,
+            $request->input('name'),
+            $request->input('brand'),
+            $request->input('category'),
+            [
+                'unit' => $request->input('unit'),
+                'warranty' => $request->input('warranty'),
+                'phase' => $this->normalizePhase($request->input('phase')),
+                'power_kw' => $request->filled('power_kw') ? (float) $request->input('power_kw') : null,
+            ],
+            $request->input('specs') ?? []
+        );
+
+        return response()->json([
+            'exists' => true,
+            'all_match' => $allMatch,
+            'existing_id' => $existing->id,
+            'existing_price' => (float) $existing->price,
+        ]);
+    }
+
+    /**
      * Step 1 of import: parse the uploaded file and return reviewable
      * rows. Nothing is written to the database here.
      */
@@ -110,7 +159,7 @@ class ProductImportExportController extends Controller
             return response()->json(['message' => 'No data rows found in the file.'], 422);
         }
 
-        $products = Product::query()->get(['id', 'slug', 'name', 'price'])->keyBy('slug');
+        $products = Product::query()->get(['id', 'slug', 'name', 'price', 'brand', 'category', 'unit', 'warranty', 'phase', 'power_kw', 'specs'])->keyBy('slug');
         $categories = Category::pluck('name');
         $brands = Brand::pluck('name');
         $categorySlugs = $categories->keyBy(fn ($n) => Str::slug($n));
@@ -154,8 +203,16 @@ class ProductImportExportController extends Controller
             $status = 'new';
             $priceChanged = false;
             if ($existing) {
-                $priceChanged = $price !== null && (float) $existing->price !== $price;
-                $status = $priceChanged ? 'price-change' : 'duplicate';
+                $allMatch = $this->specsMatch($existing, $name, $brand, $category, [
+                    'unit' => trim((string) ($row['unit'] ?? '')) ?: null,
+                    'warranty' => trim((string) ($row['warranty'] ?? '')) ?: null,
+                    'phase' => $this->normalizePhase($row['phase'] ?? null),
+                    'power_kw' => is_numeric($row['power_kw'] ?? null) ? (float) $row['power_kw'] : null,
+                ], $specs);
+                if ($allMatch) {
+                    $priceChanged = $price !== null && (float) $existing->price !== $price;
+                    $status = $priceChanged ? 'price-change' : 'duplicate';
+                }
             }
 
             $preview[] = [
@@ -170,6 +227,7 @@ class ProductImportExportController extends Controller
                     'category' => $category,
                     'brand' => $brand ?: null,
                     'price' => $price,
+                    'internal_price' => is_numeric($row['internal_price'] ?? null) ? (float) $row['internal_price'] : null,
                     'price_date' => $priceDate,
                     'unit' => trim((string) ($row['unit'] ?? '')) ?: null,
                     'warranty' => trim((string) ($row['warranty'] ?? '')) ?: null,
@@ -203,7 +261,6 @@ class ProductImportExportController extends Controller
     public function importCommit(Request $request)
     {
         $payload = $request->validate([
-            'mode' => 'required|in:create-update,update-only,create-only',
             'add_categories' => 'array',
             'add_categories.*' => 'string|max:255',
             'add_brands' => 'array',
@@ -213,6 +270,7 @@ class ProductImportExportController extends Controller
             'rows.*.data.category' => 'required|string|max:255',
             'rows.*.data.brand' => 'nullable|string|max:255',
             'rows.*.data.price' => 'nullable|numeric|min:0',
+            'rows.*.data.internal_price' => 'nullable|numeric|min:0',
             'rows.*.data.price_date' => 'nullable|date',
             'rows.*.data.unit' => 'nullable|string|max:255',
             'rows.*.data.warranty' => 'nullable|string|max:255',
@@ -223,6 +281,7 @@ class ProductImportExportController extends Controller
             'rows.*.data.tagline' => 'nullable|string|max:255',
             'rows.*.data.is_published' => 'boolean',
             'rows.*.data.specs' => 'nullable|array',
+            'rows.*.action' => 'required|in:create,update,delete',
         ]);
 
         foreach ($payload['add_categories'] ?? [] as $i => $name) {
@@ -233,12 +292,14 @@ class ProductImportExportController extends Controller
         }
 
         $validCategories = Category::pluck('name');
-        $created = $updated = $skipped = 0;
+        $created = $updated = $skipped = $deleted = 0;
         $errors = [];
 
         foreach ($payload['rows'] as $i => $row) {
             $data = $row['data'];
-            if (! $validCategories->contains($data['category'])) {
+            $action = $row['action'];
+
+            if ($action !== 'delete' && ! $validCategories->contains($data['category'])) {
                 $errors[] = "Row {$data['name']}: category '{$data['category']}' does not exist and was not approved.";
                 $skipped++;
                 continue;
@@ -247,28 +308,38 @@ class ProductImportExportController extends Controller
             $slug = Str::slug($data['name']);
             $existing = Product::query()->where('slug', $slug)->first();
 
-            if ($existing && $payload['mode'] === 'create-only') {
-                $skipped++;
-                continue;
-            }
-            if (! $existing && $payload['mode'] === 'update-only') {
-                $skipped++;
-                continue;
-            }
-
             $attributes = collect($data)->except(['price', 'price_date'])->all();
             $price = $data['price'] ?? null;
 
-            if ($existing) {
+            if ($action === 'delete') {
+                if (! $existing) {
+                    $errors[] = "Row {$data['name']}: product not found — skipped deletion.";
+                    $skipped++;
+                    continue;
+                }
+                $existing->media()->detach();
+                $existing->delete();
+                $deleted++;
+            } elseif ($action === 'update') {
+                if (! $existing) {
+                    $errors[] = "Row {$data['name']}: product not found — skipped update.";
+                    $skipped++;
+                    continue;
+                }
                 $existing->update($attributes);
                 if ($price !== null && (float) $existing->price !== (float) $price) {
-                    $existing->recordPrice((float) $price, $data['price_date'] ?? null, 'import');
+                    $existing->recordPrice((float) $price, $data['price_date'] ?? null, 'import', isset($data['internal_price']) ? (float) $data['internal_price'] : null);
                 }
                 $updated++;
             } else {
+                if ($existing) {
+                    $errors[] = "Row {$data['name']}: product already exists — skipped creation.";
+                    $skipped++;
+                    continue;
+                }
                 $product = Product::create($attributes + ['slug' => $slug]);
                 if ($price !== null) {
-                    $product->recordPrice((float) $price, $data['price_date'] ?? null, 'import');
+                    $product->recordPrice((float) $price, $data['price_date'] ?? null, 'import', isset($data['internal_price']) ? (float) $data['internal_price'] : null);
                 }
                 $created++;
             }
@@ -277,6 +348,7 @@ class ProductImportExportController extends Controller
         return response()->json([
             'created' => $created,
             'updated' => $updated,
+            'deleted' => $deleted,
             'skipped' => $skipped,
             'errors' => $errors,
         ]);
@@ -453,5 +525,54 @@ class ProductImportExportController extends Controller
         return response()->download($temp, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Compare an existing product against import row data.
+     * Returns true only if name, brand, category, and all specs match exactly.
+     */
+    private function specsMatch(Product $existing, string $name, ?string $brand, ?string $category, array $fields, array $importSpecs): bool
+    {
+        // Name already matched via slug; confirm exact name match
+        if ( Str::slug($existing->name) !== Str::slug($name)) {
+            return false;
+        }
+
+        foreach (['brand', 'category'] as $field) {
+            $existingVal = $existing->{$field} ?? null;
+            $importVal = $field === 'brand' ? $brand : $category;
+            if (strtolower(trim((string) ($existingVal ?? ''))) !== strtolower(trim((string) ($importVal ?? '')))) {
+                return false;
+            }
+        }
+
+        foreach ($fields as $field => $importVal) {
+            $existingVal = $existing->{$field} ?? null;
+            if (is_numeric($existingVal) && is_numeric($importVal)) {
+                if ((float) $existingVal !== (float) $importVal) {
+                    return false;
+                }
+            } else {
+                $existingNorm = strtolower(trim((string) ($existingVal ?? '')));
+                $importNorm = strtolower(trim((string) ($importVal ?? '')));
+                if ($existingNorm !== $importNorm) {
+                    return false;
+                }
+            }
+        }
+
+        // Compare specs: every import spec must exist in DB specs (DB can have extras)
+        $existingSpecs = $existing->specs ?? [];
+        if (! is_array($existingSpecs)) {
+            $existingSpecs = [];
+        }
+
+        foreach ($importSpecs as $spec) {
+            if (! in_array($spec, $existingSpecs)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

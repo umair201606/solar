@@ -103,7 +103,7 @@ export function TrendArea({ history, trend, width = 260, height = 88 }) {
  * Full price-trend chart for the product modal. Pure SVG, hoverable
  * points, date axis from the real recorded dates.
  */
-export function PriceChart({ history, unit }) {
+export function PriceChart({ history, unit, color: overrideColor }) {
   const [hover, setHover] = useState(null);
   const W = 640;
   const H = 210;
@@ -128,7 +128,7 @@ export function PriceChart({ history, unit }) {
   const last = history[history.length - 1];
   const area = `${line} L${coords[coords.length - 1][0]},${H - 2} L${coords[0][0]},${H - 2} Z`;
   const rising = last[1] > first[1];
-  const color = rising ? "#e74c3c" : last[1] < first[1] ? "#16a34a" : "#64748b";
+  const color = overrideColor || (rising ? "#e74c3c" : last[1] < first[1] ? "#16a34a" : "#64748b");
   const span = max - min;
   const ticks = (span > 0 ? [0, 0.5, 1] : [0.5]).map((f) => ({
     f,

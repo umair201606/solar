@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductPriceHistory extends Model
 {
-    protected $fillable = ['product_id', 'price', 'recorded_on', 'source'];
+    protected $fillable = ['product_id', 'price', 'internal_price', 'recorded_on', 'source'];
 
     protected function casts(): array
     {
         return [
             'price' => 'decimal:2',
+            'internal_price' => 'decimal:2',
             'recorded_on' => 'date:Y-m-d',
         ];
     }

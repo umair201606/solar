@@ -19,7 +19,7 @@ class StoreController extends Controller
      * Default card image for a category when the product has no photo:
      * per-category image from settings, else the global default.
      */
-    private function categoryImage(?string $category): ?string
+    public function categoryImage(?string $category): ?string
     {
         $key = match (true) {
             str_contains((string) $category, 'Batter') => 'category_image_batteries',

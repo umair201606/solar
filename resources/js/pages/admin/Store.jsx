@@ -226,6 +226,9 @@ export default function Store() {
                   <th className="text-right px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">
                     Price
                   </th>
+                  <th className="text-right px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                    Int. Price
+                  </th>
                   <th className="text-left px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider hidden md:table-cell">
                     Trend (30 Days)
                   </th>
@@ -297,6 +300,9 @@ export default function Store() {
                       </td>
                       <td className="px-4 py-3 text-sm text-right font-semibold text-[#041a12] whitespace-nowrap">
                         {formatRs(product.price, product.unit)}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right font-semibold text-gray-500 whitespace-nowrap hidden lg:table-cell">
+                        {product.internal_price ? formatRs(product.internal_price, product.unit) : "—"}
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         <div className="flex items-center gap-2">

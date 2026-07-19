@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import {
   Loader2, Upload, FileSpreadsheet, ArrowLeft, Check, AlertTriangle,
-  ChevronDown, Sparkles, RefreshCw, CircleCheck, CircleX,
+  ChevronDown, Sparkles, RefreshCw, CircleCheck, CircleX, ArrowRightLeft,
+  Trash2,
 } from "lucide-react";
 import { formatRs } from "../../lib/format";
 
@@ -14,24 +15,156 @@ const TEMPLATE_TYPES = [
   { id: "generic", label: "Generic template" },
 ];
 
-const MODES = [
-  { id: "create-update", label: "Create new + update rates", hint: "New rows become products, matched rows get the new price" },
-  { id: "update-only", label: "Update rates only", hint: "Only existing products are touched — nothing new is created" },
-  { id: "create-only", label: "Create new only", hint: "Rows matching existing products are skipped" },
-];
-
 const STATUS_STYLE = {
   "new": "bg-blue-50 text-blue-700",
   "price-change": "bg-amber-50 text-amber-700",
   "duplicate": "bg-gray-100 text-gray-500",
 };
 
+function RowFields({ row, index, updateRow, allCategoryOptions, allBrandOptions }) {
+  return (
+    <>
+      <td className="px-3 py-2 min-w-[220px]">
+        <input
+          value={row.data.name}
+          onChange={(e) => updateRow(index, "name", e.target.value)}
+          className="w-full px-2 py-1.5 rounded-lg border border-transparent hover:border-gray-200 focus:border-[#d4ff00] text-sm font-medium outline-none bg-transparent"
+        />
+        <span className={`inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-full mt-0.5 ${
+          row.action === "delete" ? "bg-red-50 text-red-700"
+          : row.status === "price-change" ? "bg-amber-50 text-amber-700"
+          : row.status === "duplicate" ? "bg-gray-100 text-gray-500"
+          : "bg-blue-50 text-blue-700"
+        }`}>
+          {row.action === "delete" ? "delete" : row.status === "price-change" ? "rate change" : row.status === "duplicate" ? "exists" : "new"}
+        </span>
+      </td>
+      <td className="px-3 py-2">
+        <select
+          value={row.data.category || ""}
+          onChange={(e) => updateRow(index, "category", e.target.value)}
+          className={`px-2 py-1.5 rounded-lg border text-sm outline-none bg-white ${
+            row.data.category && !allCategoryOptions.includes(row.data.category)
+              ? "border-amber-300"
+              : "border-gray-200"
+          }`}
+        >
+          <option value="">— pick —</option>
+          {allCategoryOptions.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+      </td>
+      <td className="px-3 py-2">
+        <select
+          value={row.data.brand || ""}
+          onChange={(e) => updateRow(index, "brand", e.target.value || null)}
+          className="px-2 py-1.5 rounded-lg border border-gray-200 text-sm outline-none bg-white"
+        >
+          <option value="">—</option>
+          {allBrandOptions.map((b) => (
+            <option key={b} value={b}>{b}</option>
+          ))}
+        </select>
+      </td>
+      <td className="px-3 py-2">
+        <input
+          type="number"
+          step="0.01"
+          value={row.data.price ?? ""}
+          onChange={(e) => updateRow(index, "price", e.target.value === "" ? null : Number(e.target.value))}
+          className="w-28 px-2 py-1.5 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#d4ff00]"
+        />
+        {row.status === "price-change" && (
+          <p className="text-[11px] text-amber-600 mt-0.5 whitespace-nowrap">
+            was {formatRs(row.existing_price)}
+          </p>
+        )}
+      </td>
+      <td className="px-3 py-2">
+        <input
+          type="date"
+          value={row.data.price_date ?? ""}
+          onChange={(e) => updateRow(index, "price_date", e.target.value || null)}
+          className="px-2 py-1.5 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#d4ff00]"
+        />
+      </td>
+      <td className="px-3 py-2 text-xs text-gray-400">
+        {row.issues.join(", ") || "—"}
+      </td>
+    </>
+  );
+}
+
+function SectionTable({ title, count, accentColor, rows, rowIndices, updateRow, toggleInclude, allCategoryOptions, allBrandOptions, onTransfer }) {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+        <span className={`w-2.5 h-2.5 rounded-full ${accentColor}`} />
+        <h3 className="text-sm font-black text-[#041a12]">{title}</h3>
+        <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{count}</span>
+      </div>
+      {count === 0 ? (
+        <p className="px-4 py-6 text-xs text-gray-400 text-center">No rows in this section.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px]">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/50">
+                {["Use", "Product", "Category", "Brand", "Price (Rs.)", "Price Date", "Notes", ""].map((h) => (
+                  <th key={h} className="text-left px-3 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rowIndices.map((idx) => {
+                const row = rows[idx];
+                return (
+                  <tr key={idx} className={`border-b border-gray-50 ${row.include ? "" : "opacity-40"}`}>
+                    <td className="px-3 py-2">
+                      <input
+                        type="checkbox"
+                        checked={row.include}
+                        onChange={() => toggleInclude(idx)}
+                        className="w-4 h-4 accent-[#041a12]"
+                      />
+                    </td>
+                    <RowFields
+                      row={row}
+                      index={idx}
+                      updateRow={updateRow}
+                      allCategoryOptions={allCategoryOptions}
+                      allBrandOptions={allBrandOptions}
+                    />
+                    <td className="px-3 py-2">
+                      <button
+                        onClick={() => onTransfer(idx)}
+                        title={row.action === "delete" ? "Move to Create" : row.action === "create" ? "Move to Update" : "Move to Delete"}
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                          row.action === "delete"
+                            ? "bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700"
+                            : "bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-[#041a12]"
+                        }`}
+                      >
+                        {row.action === "delete" ? <Trash2 className="w-3.5 h-3.5" /> : <ArrowRightLeft className="w-3.5 h-3.5" />}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ImportManager() {
   const fileRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(null);
   const [rows, setRows] = useState([]);
-  const [mode, setMode] = useState("create-update");
   const [acceptedCategories, setAcceptedCategories] = useState([]);
   const [acceptedBrands, setAcceptedBrands] = useState([]);
   const [catalog, setCatalog] = useState({ categories: [], brands: [] });
@@ -58,7 +191,12 @@ export default function ImportManager() {
       form.append("file", file);
       const { data } = await axios.post("/api/products/import/preview", form);
       setPreview(data);
-      setRows(data.rows);
+      setRows(
+        data.rows.map((r) => ({
+          ...r,
+          action: r.status === "new" ? "create" : "update",
+        }))
+      );
       setAcceptedCategories([]);
       setAcceptedBrands([]);
     } catch (e) {
@@ -75,12 +213,75 @@ export default function ImportManager() {
         i === index ? { ...row, data: { ...row.data, [field]: value } } : row
       )
     );
+    if (["name", "brand", "category", "unit", "warranty", "phase", "power_kw"].includes(field)) {
+      checkRowRealtime(index);
+    }
   };
 
   const toggleInclude = (index) =>
     setRows((prev) => prev.map((row, i) => (i === index ? { ...row, include: !row.include } : row)));
 
+  const transferRow = (index) =>
+    setRows((prev) =>
+      prev.map((row, i) => {
+        if (i !== index) return row;
+        const next = row.action === "create" ? "update" : row.action === "update" ? "delete" : "create";
+        return { ...row, action: next };
+      })
+    );
+
+  const timersRef = useRef({});
+  const rowsRef = useRef(rows);
+  rowsRef.current = rows;
+
+  const checkRowRealtime = useCallback((index) => {
+    if (timersRef.current[index]) clearTimeout(timersRef.current[index]);
+    timersRef.current[index] = setTimeout(async () => {
+      const row = rowsRef.current[index];
+      if (!row) return;
+      const d = row.data;
+      if (!d.name?.trim()) return;
+      try {
+        const { data } = await axios.post("/api/products/import/check", {
+          name: d.name,
+          brand: d.brand,
+          category: d.category,
+          unit: d.unit,
+          warranty: d.warranty,
+          phase: d.phase,
+          power_kw: d.power_kw,
+          specs: d.specs,
+        });
+        setRows((prev) =>
+          prev.map((r, i) => {
+            if (i !== index) return r;
+            if (data.exists && data.all_match) {
+              const priceChanged = d.price != null && data.existing_price != null && parseFloat(d.price) !== data.existing_price;
+              return {
+                ...r,
+                status: priceChanged ? "price-change" : "duplicate",
+                existing_id: data.existing_id,
+                existing_price: data.existing_price,
+                action: "update",
+              };
+            }
+            if (data.exists && !data.all_match) {
+              return { ...r, status: "new", action: "create", existing_id: null };
+            }
+            return { ...r, status: "new", action: "create", existing_id: null };
+          })
+        );
+      } catch {}
+    }, 400);
+  }, []);
+
   const includedRows = rows.filter((r) => r.include);
+  const createRows = rows.filter((r) => r.action === "create");
+  const updateRows = rows.filter((r) => r.action === "update");
+  const deleteRows = rows.filter((r) => r.action === "delete");
+  const createIndices = rows.reduce((acc, r, i) => (r.action === "create" ? [...acc, i] : acc), []);
+  const updateIndices = rows.reduce((acc, r, i) => (r.action === "update" ? [...acc, i] : acc), []);
+  const deleteIndices = rows.reduce((acc, r, i) => (r.action === "delete" ? [...acc, i] : acc), []);
 
   const pendingCategories = (preview?.new_categories || []).filter((c) =>
     includedRows.some((r) => r.data.category === c)
@@ -95,7 +296,6 @@ export default function ImportManager() {
     setError("");
     try {
       const { data } = await axios.post("/api/products/import/commit", {
-        mode,
         add_categories: acceptedCategories,
         add_brands: acceptedBrands,
         rows: includedRows,
@@ -164,7 +364,7 @@ export default function ImportManager() {
           <h2 className="font-black text-[#041a12] mb-1">2 · Upload the filled file</h2>
           <p className="text-xs text-gray-400 mb-4">
             Works for both jobs: adding new products and batch-updating rates of existing ones
-            (rows are matched to products by name). Accepts .xlsx and .csv.
+            (rows are matched to products by name + specs). Accepts .xlsx and .csv.
           </p>
 
           <label className="border-2 border-dashed border-gray-200 hover:border-[#d4ff00] rounded-2xl p-10 flex flex-col items-center justify-center cursor-pointer transition-colors">
@@ -192,9 +392,9 @@ export default function ImportManager() {
       {/* Step 2: review */}
       {preview && (
         <div className="space-y-4">
-          {/* Summary + mode */}
+          {/* Summary */}
           <div className="bg-white rounded-2xl border border-gray-100 p-5">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
+            <div className="flex flex-wrap items-center gap-3">
               <span className="text-sm font-black text-[#041a12]">
                 {preview.summary.total} rows read
               </span>
@@ -205,7 +405,7 @@ export default function ImportManager() {
                 {preview.summary.price_changes} rate changes
               </span>
               <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_STYLE["duplicate"]}`}>
-                {preview.summary.duplicates} unchanged duplicates
+                {preview.summary.duplicates} product already exists
               </span>
               <button
                 onClick={() => { setPreview(null); setRows([]); }}
@@ -213,21 +413,6 @@ export default function ImportManager() {
               >
                 <RefreshCw className="w-3.5 h-3.5" /> Start over
               </button>
-            </div>
-
-            <div className="grid sm:grid-cols-3 gap-2">
-              {MODES.map((m) => (
-                <label
-                  key={m.id}
-                  className={`rounded-xl border p-3 cursor-pointer transition-colors ${
-                    mode === m.id ? "border-[#041a12] bg-[#041a12] text-white" : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <input type="radio" className="hidden" checked={mode === m.id} onChange={() => setMode(m.id)} />
-                  <p className="text-sm font-bold">{m.label}</p>
-                  <p className={`text-xs mt-0.5 ${mode === m.id ? "text-white/60" : "text-gray-400"}`}>{m.hint}</p>
-                </label>
-              ))}
             </div>
           </div>
 
@@ -300,99 +485,50 @@ export default function ImportManager() {
             </div>
           )}
 
-          {/* Rows table */}
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px]">
-                <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50/50">
-                    {["Use", "Status", "Product", "Category", "Brand", "Price (Rs.)", "Price Date", "Notes"].map((h) => (
-                      <th key={h} className="text-left px-3 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row, i) => (
-                    <tr key={i} className={`border-b border-gray-50 ${row.include ? "" : "opacity-40"}`}>
-                      <td className="px-3 py-2">
-                        <input
-                          type="checkbox"
-                          checked={row.include}
-                          onChange={() => toggleInclude(i)}
-                          className="w-4 h-4 accent-[#041a12]"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <span className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${STATUS_STYLE[row.status]}`}>
-                          {row.status === "price-change" ? "rate change" : row.status}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2 min-w-[220px]">
-                        <input
-                          value={row.data.name}
-                          onChange={(e) => updateRow(i, "name", e.target.value)}
-                          className="w-full px-2 py-1.5 rounded-lg border border-transparent hover:border-gray-200 focus:border-[#d4ff00] text-sm font-medium outline-none bg-transparent"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <select
-                          value={row.data.category || ""}
-                          onChange={(e) => updateRow(i, "category", e.target.value)}
-                          className={`px-2 py-1.5 rounded-lg border text-sm outline-none bg-white ${
-                            row.data.category && !allCategoryOptions.includes(row.data.category)
-                              ? "border-amber-300"
-                              : "border-gray-200"
-                          }`}
-                        >
-                          <option value="">— pick —</option>
-                          {allCategoryOptions.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="px-3 py-2">
-                        <select
-                          value={row.data.brand || ""}
-                          onChange={(e) => updateRow(i, "brand", e.target.value || null)}
-                          className="px-2 py-1.5 rounded-lg border border-gray-200 text-sm outline-none bg-white"
-                        >
-                          <option value="">—</option>
-                          {allBrandOptions.map((b) => (
-                            <option key={b} value={b}>{b}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={row.data.price ?? ""}
-                          onChange={(e) => updateRow(i, "price", e.target.value === "" ? null : Number(e.target.value))}
-                          className="w-28 px-2 py-1.5 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#d4ff00]"
-                        />
-                        {row.status === "price-change" && (
-                          <p className="text-[11px] text-amber-600 mt-0.5 whitespace-nowrap">
-                            was {formatRs(row.existing_price)}
-                          </p>
-                        )}
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="date"
-                          value={row.data.price_date ?? ""}
-                          onChange={(e) => updateRow(i, "price_date", e.target.value || null)}
-                          className="px-2 py-1.5 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#d4ff00]"
-                        />
-                      </td>
-                      <td className="px-3 py-2 text-xs text-gray-400">
-                        {row.issues.join(", ") || "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          {/* Create new section */}
+          <SectionTable
+            title="Create new products"
+            count={createRows.length}
+            accentColor="bg-blue-500"
+            rows={rows}
+            rowIndices={createIndices}
+            updateRow={updateRow}
+            toggleInclude={toggleInclude}
+            allCategoryOptions={allCategoryOptions}
+            allBrandOptions={allBrandOptions}
+            onTransfer={transferRow}
+          />
+
+          {/* Update rate only section */}
+          <SectionTable
+            title="Update rate only"
+            count={updateRows.length}
+            accentColor="bg-amber-500"
+            rows={rows}
+            rowIndices={updateIndices}
+            updateRow={updateRow}
+            toggleInclude={toggleInclude}
+            allCategoryOptions={allCategoryOptions}
+            allBrandOptions={allBrandOptions}
+            onTransfer={transferRow}
+          />
+
+          {/* Delete section */}
+          {deleteRows.length > 0 && (
+            <SectionTable
+              title="Delete existing products"
+              count={deleteRows.length}
+              accentColor="bg-red-500"
+              rows={rows}
+              rowIndices={deleteIndices}
+              updateRow={updateRow}
+              toggleInclude={toggleInclude}
+              allCategoryOptions={allCategoryOptions}
+              allBrandOptions={allBrandOptions}
+              onTransfer={transferRow}
+              isDelete
+            />
+          )}
 
           {error && <p className="text-sm font-bold text-red-500">{error}</p>}
 
@@ -423,6 +559,7 @@ export default function ImportManager() {
           <p className="text-sm text-gray-500 mb-5">
             <span className="font-bold text-blue-700">{result.created} created</span> ·{" "}
             <span className="font-bold text-amber-700">{result.updated} updated</span> ·{" "}
+            <span className="font-bold text-red-600">{result.deleted || 0} deleted</span> ·{" "}
             <span className="font-bold text-gray-500">{result.skipped} skipped</span>
           </p>
           {result.errors?.length > 0 && (

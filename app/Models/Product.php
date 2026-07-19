@@ -47,11 +47,11 @@ class Product extends Model
      * Store a dated price point (upserts on the same date) and sync the
      * product's current price/trend from its full history.
      */
-    public function recordPrice(float $price, ?string $date = null, string $source = 'manual'): void
+    public function recordPrice(float $price, ?string $date = null, string $source = 'manual', ?float $internalPrice = null): void
     {
         $this->priceHistories()->updateOrCreate(
             ['recorded_on' => $date ?: now()->toDateString()],
-            ['price' => $price, 'source' => $source],
+            ['price' => $price, 'internal_price' => $internalPrice, 'source' => $source],
         );
         $this->refreshTrend();
     }

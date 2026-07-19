@@ -94,13 +94,15 @@ export default function ProductEditor() {
   const [form, setForm] = useState(emptyForm);
   const [original, setOriginal] = useState(null);
   const [catalog, setCatalog] = useState({ categories: [], brands: [] });
+  const [categoryDefaultImage, setCategoryDefaultImage] = useState(null);
   const [addingBrand, setAddingBrand] = useState(false);
   const [newBrand, setNewBrand] = useState("");
   const [history, setHistory] = useState([]);
-  const [newPrice, setNewPrice] = useState({ price: "", recorded_on: new Date().toISOString().slice(0, 10) });
+  const [graphMode, setGraphMode] = useState("price");
+  const [newPrice, setNewPrice] = useState({ price: "", internal_price: "", recorded_on: new Date().toISOString().slice(0, 10) });
   const [addingPrice, setAddingPrice] = useState(false);
   const [editingPriceId, setEditingPriceId] = useState(null);
-  const [editPriceForm, setEditPriceForm] = useState({ price: "", recorded_on: "" });
+  const [editPriceForm, setEditPriceForm] = useState({ price: "", internal_price: "", recorded_on: "" });
   const [mainImage, setMainImage] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -163,6 +165,7 @@ export default function ProductEditor() {
         setOriginal(p);
         setForm(loaded);
         setHistory(p.price_histories || []);
+        setCategoryDefaultImage(p.category_default_image || null);
         setMainImage(main);
         setGalleryImages(gallery);
         snapshotRef.current = snapshot(loaded, main, gallery);
@@ -260,10 +263,11 @@ export default function ProductEditor() {
     if (!newPrice.price) return;
     const { data } = await axios.post(`/api/products/${id}/prices`, {
       price: parseFloat(newPrice.price),
+      internal_price: newPrice.internal_price !== "" ? parseFloat(newPrice.internal_price) : null,
       recorded_on: newPrice.recorded_on,
     });
     setHistory(data);
-    setNewPrice({ price: "", recorded_on: new Date().toISOString().slice(0, 10) });
+    setNewPrice({ price: "", internal_price: "", recorded_on: new Date().toISOString().slice(0, 10) });
     setAddingPrice(false);
   };
 
@@ -271,6 +275,7 @@ export default function ProductEditor() {
     if (!editPriceForm.price) return;
     const { data } = await axios.put(`/api/products/${id}/prices/${editingPriceId}`, {
       price: parseFloat(editPriceForm.price),
+      internal_price: editPriceForm.internal_price !== "" ? parseFloat(editPriceForm.internal_price) : null,
       recorded_on: editPriceForm.recorded_on,
     });
     setHistory(data);
@@ -288,7 +293,12 @@ export default function ProductEditor() {
     () => (history || []).map((h) => [h.recorded_on?.slice(0, 10), Number(h.price)]),
     [history]
   );
-  const trendPairs = useMemo(() => sliceDays(pairs, trendRange), [pairs, trendRange]);
+  const internalPairs = useMemo(
+    () => (history || []).filter((h) => h.internal_price != null).map((h) => [h.recorded_on?.slice(0, 10), Number(h.internal_price)]),
+    [history]
+  );
+  const activePairs = graphMode === "internal" ? internalPairs : pairs;
+  const trendPairs = useMemo(() => sliceDays(activePairs, trendRange), [activePairs, trendRange]);
 
   const stats30 = useMemo(() => {
     const s = sliceDays(pairs, 30);
@@ -514,23 +524,45 @@ export default function ProductEditor() {
                   icon={TrendingUp}
                   title="Price Trend"
                   right={
-                    <div className="flex gap-1 bg-gray-50 border border-gray-200 rounded-xl p-1">
-                      {TREND_RANGES.map(([label, days]) => (
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1 bg-gray-50 border border-gray-200 rounded-xl p-1">
+                        {TREND_RANGES.map(([label, days]) => (
+                          <button
+                            key={label}
+                            type="button"
+                            onClick={() => setTrendRange(days)}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors ${
+                              trendRange === days ? "bg-emerald-600 text-white" : "text-gray-500 hover:text-gray-800"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex gap-1 bg-gray-50 border border-gray-200 rounded-xl p-1">
                         <button
-                          key={label}
                           type="button"
-                          onClick={() => setTrendRange(days)}
+                          onClick={() => setGraphMode("price")}
                           className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors ${
-                            trendRange === days ? "bg-emerald-600 text-white" : "text-gray-500 hover:text-gray-800"
+                            graphMode === "price" ? "bg-emerald-600 text-white" : "text-gray-500 hover:text-gray-800"
                           }`}
                         >
-                          {label}
+                          Price
                         </button>
-                      ))}
+                        <button
+                          type="button"
+                          onClick={() => setGraphMode("internal")}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors ${
+                            graphMode === "internal" ? "bg-emerald-600 text-white" : "text-gray-500 hover:text-gray-800"
+                          }`}
+                        >
+                          Internal
+                        </button>
+                      </div>
                     </div>
                   }
                 />
-                <PriceChart history={trendPairs} unit={form.unit} />
+                <PriceChart history={trendPairs} unit={form.unit} color={graphMode === "internal" ? "#3b82f6" : undefined} />
               </div>
             )}
 
@@ -584,9 +616,18 @@ export default function ProductEditor() {
                     </div>
                   ) : (
                     <button type="button" onClick={() => setPickerFor("main")}
-                      className="flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-gray-300 text-gray-400 text-sm hover:border-emerald-500 hover:text-emerald-700 transition-colors">
-                      <ImagePlus className="w-4 h-4" />
-                      Select Main Image
+                      className="relative inline-block group">
+                      {categoryDefaultImage ? (
+                        <img src={categoryDefaultImage} alt="Default" className="h-28 w-48 object-cover rounded-xl border border-gray-200" />
+                      ) : (
+                        <div className="flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-gray-300 text-gray-400 text-sm hover:border-emerald-500 hover:text-emerald-700 transition-colors">
+                          <ImagePlus className="w-4 h-4" />
+                          Select Main Image
+                        </div>
+                      )}
+                      <span className="absolute inset-0 rounded-xl bg-black/40 flex items-center justify-center text-white text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                        Change Image
+                      </span>
                     </button>
                   )}
                   <Hint>No image? The store shows the category image from Settings (or a branded placeholder).</Hint>
@@ -745,6 +786,12 @@ export default function ProductEditor() {
                         className="w-28 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-emerald-500 bg-white" />
                     </div>
                     <div>
+                      <label className="block text-[10px] font-bold text-gray-400 mb-0.5">Internal (Rs.)</label>
+                      <input type="number" step="0.01" min="0" value={newPrice.internal_price} placeholder="optional"
+                        onChange={(e) => setNewPrice({ ...newPrice, internal_price: e.target.value })}
+                        className="w-28 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-emerald-500 bg-white" />
+                    </div>
+                    <div>
                       <label className="block text-[10px] font-bold text-gray-400 mb-0.5">On date</label>
                       <input type="date" value={newPrice.recorded_on}
                         onChange={(e) => setNewPrice({ ...newPrice, recorded_on: e.target.value })}
@@ -767,6 +814,7 @@ export default function ProductEditor() {
                         <tr className="text-left text-[10px] font-black text-gray-400 uppercase tracking-wider">
                           <th className="px-3 py-2">Date</th>
                           <th className="px-3 py-2">Price (Rs.)</th>
+                          <th className="px-3 py-2">Internal (Rs.)</th>
                           <th className="px-3 py-2">Source</th>
                           <th className="px-3 py-2 text-right">Actions</th>
                         </tr>
@@ -784,6 +832,11 @@ export default function ProductEditor() {
                                 <td className="px-3 py-2">
                                   <input type="number" step="0.01" min="0" value={editPriceForm.price}
                                     onChange={(e) => setEditPriceForm({ ...editPriceForm, price: e.target.value })}
+                                    className="w-24 px-2 py-1 rounded-lg border border-gray-200 text-sm outline-none focus:border-emerald-500" />
+                                </td>
+                                <td className="px-3 py-2">
+                                  <input type="number" step="0.01" min="0" value={editPriceForm.internal_price} placeholder="—"
+                                    onChange={(e) => setEditPriceForm({ ...editPriceForm, internal_price: e.target.value })}
                                     className="w-24 px-2 py-1 rounded-lg border border-gray-200 text-sm outline-none focus:border-emerald-500" />
                                 </td>
                                 <td className="px-3 py-2 text-xs text-gray-400 capitalize">{h.source}</td>
@@ -808,6 +861,9 @@ export default function ProductEditor() {
                                 <td className="px-3 py-2 font-bold text-[#041a12] whitespace-nowrap">
                                   {formatRs(h.price, form.unit)}
                                 </td>
+                                <td className="px-3 py-2 text-gray-500 whitespace-nowrap">
+                                  {h.internal_price != null ? formatRs(h.internal_price, form.unit) : "—"}
+                                </td>
                                 <td className="px-3 py-2 text-xs text-gray-400 capitalize">{h.source}</td>
                                 <td className="px-3 py-2">
                                   <div className="flex items-center justify-end gap-1">
@@ -815,7 +871,7 @@ export default function ProductEditor() {
                                       type="button"
                                       onClick={() => {
                                         setEditingPriceId(h.id);
-                                        setEditPriceForm({ price: h.price, recorded_on: h.recorded_on?.slice(0, 10) || "" });
+                                        setEditPriceForm({ price: h.price, internal_price: h.internal_price ?? "", recorded_on: h.recorded_on?.slice(0, 10) || "" });
                                       }}
                                       className="w-7 h-7 rounded-lg bg-blue-50 hover:bg-blue-100 inline-flex items-center justify-center text-blue-600"
                                     >
