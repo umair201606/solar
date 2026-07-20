@@ -97,6 +97,13 @@ class Product extends Model
         $latest = (float) $latestPoint->price;
         $updates = ['price' => $latest, 'trend' => 'stable', 'price_change' => null];
 
+        // Internal price is derived from history too, so the product column keeps
+        // matching the latest point. Only overwrite when the latest point actually
+        // carries an internal price, so a price-only entry doesn't wipe it.
+        if ($latestPoint->internal_price !== null) {
+            $updates['internal_price'] = (float) $latestPoint->internal_price;
+        }
+
         $previous = $this->priceHistories()
             ->reorder('recorded_on', 'desc')
             ->where('recorded_on', '<', $latestPoint->recorded_on)

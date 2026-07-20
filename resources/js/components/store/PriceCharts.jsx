@@ -3,11 +3,45 @@ import { formatRs, formatRsShort, formatDate, formatDateFull } from "../../lib/f
 
 // history: array of [isoDate, price] sorted by date ascending.
 
-function pathFrom(points, w, h, pad = 2, padLeft = pad) {
+// Round a range up to a "nice" 1/2/5·10ⁿ number for readable axis ticks.
+function niceNum(range, round) {
+  if (!(range > 0)) return 1;
+  const exp = Math.floor(Math.log10(range));
+  const frac = range / Math.pow(10, exp);
+  const nice = round
+    ? frac < 1.5 ? 1 : frac < 3 ? 2 : frac < 7 ? 5 : 10
+    : frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
+  return nice * Math.pow(10, exp);
+}
+
+/**
+ * A padded, rounded [lo, hi] axis domain + tick step so the line sits inside
+ * the plot with breathing room above and below — instead of the min/max data
+ * points hugging the very bottom and top edges. Returns nice round bounds.
+ */
+function niceDomain(min, max, maxTicks = 4) {
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return { lo: 0, hi: 1, step: 1 };
+  if (min === max) {
+    // Flat series: build a small window centred on the value.
+    const pad = niceNum((Math.abs(min) || 1) * 0.1, false);
+    return { lo: min - pad, hi: min + pad, step: pad };
+  }
+  const dataRange = max - min;
+  const paddedMin = min - dataRange * 0.4; // more room below → baseline lifts off the floor
+  const paddedMax = max + dataRange * 0.25;
+  const step = niceNum((paddedMax - paddedMin) / (maxTicks - 1), true);
+  return {
+    lo: Math.floor(paddedMin / step) * step,
+    hi: Math.ceil(paddedMax / step) * step,
+    step,
+  };
+}
+
+function pathFrom(points, w, h, pad = 2, padLeft = pad, domain = null) {
   if (points.length === 0) return { line: "", coords: [] };
   const prices = points.map((p) => p[1]);
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
+  const min = domain ? domain[0] : Math.min(...prices);
+  const max = domain ? domain[1] : Math.max(...prices);
   const span = max - min || 1;
   const t0 = new Date(points[0][0]).getTime();
   const t1 = new Date(points[points.length - 1][0]).getTime();
@@ -110,10 +144,12 @@ export function PriceChart({ history, unit, color: overrideColor }) {
   const PAD = 14;
   const PADL = 66;
 
-  const { line, coords, min, max } = useMemo(
-    () => pathFrom(history || [], W, H, PAD, PADL),
-    [history]
-  );
+  const { line, coords, min, max, step } = useMemo(() => {
+    const pts = history || [];
+    const prices = pts.map((p) => p[1]);
+    const { lo, hi, step } = niceDomain(Math.min(...prices), Math.max(...prices));
+    return { ...pathFrom(pts, W, H, PAD, PADL, [lo, hi]), step };
+  }, [history]);
 
   if (!history || history.length < 2) {
     return (
@@ -129,12 +165,11 @@ export function PriceChart({ history, unit, color: overrideColor }) {
   const area = `${line} L${coords[coords.length - 1][0]},${H - 2} L${coords[0][0]},${H - 2} Z`;
   const rising = last[1] > first[1];
   const color = overrideColor || (rising ? "#e74c3c" : last[1] < first[1] ? "#16a34a" : "#64748b");
-  const span = max - min;
-  const ticks = (span > 0 ? [0, 0.5, 1] : [0.5]).map((f) => ({
-    f,
-    value: max - f * span,
-    y: PAD + f * (H - PAD * 2),
-  }));
+  const span = max - min || 1;
+  const ticks = [];
+  for (let v = min; v <= max + step * 0.5; v += step) {
+    ticks.push({ value: v, y: PAD + ((max - v) / span) * (H - PAD * 2) });
+  }
 
   return (
     <div>
@@ -151,7 +186,7 @@ export function PriceChart({ history, unit, color: overrideColor }) {
             </linearGradient>
           </defs>
           {ticks.map((t) => (
-            <g key={t.f}>
+            <g key={t.value}>
               <line
                 x1={PADL} x2={W - PAD} y1={t.y} y2={t.y}
                 stroke="#e5e7eb" strokeWidth="1" strokeDasharray="4 4"
