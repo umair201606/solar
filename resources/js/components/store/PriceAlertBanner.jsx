@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell, X, Check, Loader2 } from "lucide-react";
 import axios from "axios";
-import { pushSupported, notificationPermission, subscribe } from "../../lib/pushAlerts";
+import { pushSupported, subscribe } from "../../lib/pushAlerts";
 
 const DISMISS_KEY = "solarkon_price_alert_dismissed";
 const DISMISS_DAYS = 7;
@@ -34,10 +34,12 @@ export default function PriceAlertBanner() {
   const [status, setStatus] = useState("idle"); // idle | saving | done | denied | error
 
   useEffect(() => {
-    // Show for anyone who can receive push and hasn't already opted in or
-    // dismissed recently. Note: we do NOT touch the service worker here — that
-    // happens only when they click Enable, so nothing can block the banner.
-    if (!pushSupported() || recentlyDismissed() || notificationPermission() === "granted") return;
+    // Show on any device that can receive push and hasn't been explicitly
+    // dismissed here. Subscription state is per-device and never checked, so
+    // opting in on one device (or account/Apple ID) does not hide the banner on
+    // another. Note: we do NOT touch the service worker here — that happens only
+    // when they click Enable, so nothing can block the banner.
+    if (!pushSupported() || recentlyDismissed()) return;
 
     let alive = true;
     axios
@@ -81,7 +83,6 @@ export default function PriceAlertBanner() {
     try {
       await subscribe(filters, config.public_key);
       setStatus("done");
-      localStorage.setItem(DISMISS_KEY, String(Date.now()));
       setTimeout(() => {
         setVisible(false);
         setOpen(false);
