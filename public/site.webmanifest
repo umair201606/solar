@@ -1,0 +1,26 @@
+{
+    "name": "Solarkon — Solar Energy Solutions in Pakistan",
+    "short_name": "Solarkon",
+    "description": "Pakistan's leading solar energy company. Residential, commercial, industrial and agricultural solar systems, net metering and flexible financing.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#F97316",
+    "lang": "en-PK",
+    "categories": ["business", "utilities", "energy"],
+    "icons": [
+        {
+            "src": "/brand-logos/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/brand-logos/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

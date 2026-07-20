@@ -15,8 +15,14 @@ return [
     |
     */
 
+    // Server-side rendering via a Node process is disabled: the public site
+    // gets its crawlable SEO from server-rendered <head> tags in
+    // resources/views/app.blade.php (driven by App\Support\Seo), so there is
+    // no persistent SSR daemon to run or keep alive on the server. Leaving
+    // this enabled without a running SSR server adds latency to every request
+    // and injects a duplicate empty <title>.
     'ssr' => [
-        'enabled' => true,
+        'enabled' => false,
         'url' => 'http://127.0.0.1:13714',
         // 'bundle' => base_path('bootstrap/ssr/ssr.mjs'),
 

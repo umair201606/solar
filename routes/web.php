@@ -16,6 +16,10 @@ use App\Http\Controllers\ProductImportExportController;
 use App\Http\Controllers\CrmController;
 use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\PriceAlertController;
+use App\Http\Controllers\SitemapController;
+
+// SEO: dynamic XML sitemap (referenced from public/robots.txt)
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Public routes
 Route::inertia('/', 'Home')->name('home');

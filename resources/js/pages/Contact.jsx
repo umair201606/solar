@@ -1,3 +1,4 @@
+import SEO from "../components/SEO";
 import PageHero from "../components/shared/PageHero";
 import ContactSection from "../components/contact/ContactSection";
 import Testimonials from "../components/projects/Testimonials";
@@ -7,6 +8,7 @@ import Reveal from "../components/shared/Reveal";
 export default function Contact() {
   return (
     <>
+      <SEO />
       <PageHero title="Contact" />
       <Reveal animation="fade-right" delay="50ms" slideOffset={60}>
         <ContactSection />

@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Models\Project;
+use App\Support\Seo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -38,9 +40,18 @@ class HandleInertiaRequests extends Middleware
     {
         $isAdmin = $request->is('admin*') || $request->is('api/*') || $request->is('media*');
 
+        // Build the SEO payload once and expose it two ways:
+        //  - View::share() renders it into the Blade <head> server-side, so
+        //    crawlers and social scrapers get real tags on the first byte.
+        //  - the `seo` Inertia prop lets the client SEO component keep those
+        //    same tags in sync during SPA navigation (without duplicating them).
+        $seo = Seo::forPath($request->path());
+        View::share('seo', $seo);
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'seo' => $seo,
             'auth' => [
                 'user' => $request->user(),
             ],

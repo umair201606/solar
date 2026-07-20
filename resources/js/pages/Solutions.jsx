@@ -1,3 +1,4 @@
+import SEO from "../components/SEO";
 import PageHero from "../components/shared/PageHero";
 import { CheckCircle, Zap, ShieldCheck, PieChart, Landmark } from "lucide-react";
 import { financingOptions, solutionCategories } from "../data/solutionsData";
@@ -18,6 +19,7 @@ const financePartners = [
 export default function Solutions() {
   return (
     <>
+      <SEO />
       <PageHero title="Energy Solutions" />
 
       <section className="mx-auto max-w-7xl px-6 py-16 sm:py-20">

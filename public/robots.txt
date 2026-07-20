@@ -1,4 +1,39 @@
+# robots.txt for https://solarkon.org
+# Solarkon Private Limited — Solar energy solutions in Pakistan
+
 User-agent: *
+Allow: /
+
+# Keep private / non-content areas out of the index
+Disallow: /admin
+Disallow: /admin/
+Disallow: /portal
+Disallow: /portal/
+Disallow: /api/
+Disallow: /media
+Disallow: /verify/
+
+# Allow major crawlers full access to public pages
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /portal/
+Disallow: /api/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /portal/
+Disallow: /api/
+
+# Social / preview crawlers need to fetch pages for rich link previews
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
 Allow: /
 
 Sitemap: https://solarkon.org/sitemap.xml

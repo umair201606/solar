@@ -1,4 +1,5 @@
 import { Link } from "@inertiajs/react";
+import SEO from "../components/SEO";
 import PageHero from "../components/shared/PageHero";
 import ProjectDetailHeader from "../components/projects/detail/ProjectDetailHeader";
 import ProjectDetailContent from "../components/projects/detail/ProjectDetailContent";
@@ -21,6 +22,7 @@ export default function ProjectDetail({ slug }) {
 
   return (
     <>
+      <SEO />
       <PageHero title="Project Detail" />
       <ProjectDetailHeader project={project} />
       <ProjectDetailContent project={project} />
