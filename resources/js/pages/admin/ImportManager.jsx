@@ -83,6 +83,17 @@ function RowFields({ row, index, updateRow, allCategoryOptions, allBrandOptions 
       </td>
       <td className="px-3 py-2">
         <input
+          type="number"
+          step="0.01"
+          value={row.data.internal_price ?? ""}
+          onChange={(e) => updateRow(index, "internal_price", e.target.value === "" ? null : Number(e.target.value))}
+          placeholder="—"
+          title="Internal price — hidden from store, used for dealer margin"
+          className="w-28 px-2 py-1.5 rounded-lg border border-gray-200 text-sm text-gray-600 outline-none focus:border-[#d4ff00]"
+        />
+      </td>
+      <td className="px-3 py-2">
+        <input
           type="date"
           value={row.data.price_date ?? ""}
           onChange={(e) => updateRow(index, "price_date", e.target.value || null)}
@@ -111,7 +122,7 @@ function SectionTable({ title, count, accentColor, rows, rowIndices, updateRow, 
           <table className="w-full min-w-[900px]">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50">
-                {["Use", "Product", "Category", "Brand", "Price (Rs.)", "Price Date", "Notes", ""].map((h) => (
+                {["Use", "Product", "Category", "Brand", "Price (Rs.)", "Internal (Rs.)", "Price Date", "Notes", ""].map((h) => (
                   <th key={h} className="text-left px-3 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">{h}</th>
                 ))}
               </tr>

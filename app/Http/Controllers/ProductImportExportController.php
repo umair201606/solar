@@ -532,51 +532,47 @@ class ProductImportExportController extends Controller
     }
 
     /**
-     * Compare an existing product against import row data.
-     * Returns true only if name, brand, category, and all specs match exactly.
+     * Decide whether an import row refers to the same product as an existing one.
+     * A product is matched on its NAME (compared by slug). Every other field —
+     * brand, category, unit, warranty, phase, power — is an empty-tolerant guard:
+     * it only blocks the match when BOTH the import row and the stored product
+     * carry a value and those values differ. An empty value on either side is
+     * treated as a match by default. Specs are ignored for matching.
      */
     private function specsMatch(Product $existing, string $name, ?string $brand, ?string $category, array $fields, array $importSpecs): bool
     {
-        // Name already matched via slug; confirm exact name match
-        if ( Str::slug($existing->name) !== Str::slug($name)) {
+        // Name must match exactly (by slug).
+        if (Str::slug($existing->name) !== Str::slug($name)) {
             return false;
         }
 
-        foreach (['brand', 'category'] as $field) {
-            $existingVal = $existing->{$field} ?? null;
-            $importVal = $field === 'brand' ? $brand : $category;
-            if (strtolower(trim((string) ($existingVal ?? ''))) !== strtolower(trim((string) ($importVal ?? '')))) {
-                return false;
-            }
-        }
-
-        foreach ($fields as $field => $importVal) {
-            $existingVal = $existing->{$field} ?? null;
-            if (is_numeric($existingVal) && is_numeric($importVal)) {
-                if ((float) $existingVal !== (float) $importVal) {
-                    return false;
-                }
-            } else {
-                $existingNorm = strtolower(trim((string) ($existingVal ?? '')));
-                $importNorm = strtolower(trim((string) ($importVal ?? '')));
-                if ($existingNorm !== $importNorm) {
-                    return false;
-                }
-            }
-        }
-
-        // Compare specs: every import spec must exist in DB specs (DB can have extras)
-        $existingSpecs = $existing->specs ?? [];
-        if (! is_array($existingSpecs)) {
-            $existingSpecs = [];
-        }
-
-        foreach ($importSpecs as $spec) {
-            if (! in_array($spec, $existingSpecs)) {
+        $checks = $fields + ['brand' => $brand, 'category' => $category];
+        foreach ($checks as $field => $importVal) {
+            if (! $this->valuesAgree($existing->{$field} ?? null, $importVal)) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * A field agrees unless both sides carry a (different) value. Empty on
+     * either side counts as agreement. Numbers compare numerically, text
+     * case-insensitively.
+     */
+    private function valuesAgree($existingVal, $importVal): bool
+    {
+        $e = trim((string) ($existingVal ?? ''));
+        $i = trim((string) ($importVal ?? ''));
+
+        if ($e === '' || $i === '') {
+            return true;
+        }
+        if (is_numeric($e) && is_numeric($i)) {
+            return (float) $e === (float) $i;
+        }
+
+        return strcasecmp($e, $i) === 0;
     }
 }
