@@ -259,6 +259,28 @@ export default function ProductEditor() {
   };
 
   /* ---- price history actions ---- */
+
+  // The current price/internal price are derived from the latest history point
+  // (source of truth). After any inline history change, re-sync the main form,
+  // `original` and the dirty snapshot from that latest point — otherwise the
+  // "Price (Rs.)" field keeps its stale value and a later "Save Changes" writes
+  // it back over the entry we just changed, reverting the price.
+  const applyPriceHistory = (data) => {
+    setHistory(data);
+    const latest = data.length ? data[data.length - 1] : null;
+    if (!latest) return;
+    const next = {
+      ...form,
+      price: latest.price ?? "",
+      internal_price: latest.internal_price ?? "",
+    };
+    setForm(next);
+    snapshotRef.current = snapshot(next, mainImage, galleryImages);
+    setOriginal((prev) =>
+      prev ? { ...prev, price: latest.price, internal_price: latest.internal_price } : prev
+    );
+  };
+
   const addPricePoint = async () => {
     if (!newPrice.price) return;
     const { data } = await axios.post(`/api/products/${id}/prices`, {
@@ -266,7 +288,7 @@ export default function ProductEditor() {
       internal_price: newPrice.internal_price !== "" ? parseFloat(newPrice.internal_price) : null,
       recorded_on: newPrice.recorded_on,
     });
-    setHistory(data);
+    applyPriceHistory(data);
     setNewPrice({ price: "", internal_price: "", recorded_on: new Date().toISOString().slice(0, 10) });
     setAddingPrice(false);
   };
@@ -278,14 +300,14 @@ export default function ProductEditor() {
       internal_price: editPriceForm.internal_price !== "" ? parseFloat(editPriceForm.internal_price) : null,
       recorded_on: editPriceForm.recorded_on,
     });
-    setHistory(data);
+    applyPriceHistory(data);
     setEditingPriceId(null);
   };
 
   const deletePricePoint = async (priceId) => {
     if (!confirm("Remove this price point from the trend history?")) return;
     const { data } = await axios.delete(`/api/products/${id}/prices/${priceId}`);
-    setHistory(data);
+    applyPriceHistory(data);
   };
 
   /* ---- derived ---- */
