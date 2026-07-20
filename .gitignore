@@ -69,6 +69,10 @@ yarn-error.log
 # Temp DB export files
 tmp_*.json
 
+# Local product price/import spreadsheets (not part of the app)
+/*.xlsx
+~$*.xlsx
+
 # macOS metadata
 .DS_Store
 **/.DS_Store
