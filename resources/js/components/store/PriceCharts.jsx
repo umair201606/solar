@@ -37,6 +37,14 @@ function niceDomain(min, max, maxTicks = 5) {
   };
 }
 
+// Floored [lo, hi] y-domain for a set of points, so small moves stay small on
+// the compact charts too (see niceDomain). Empty input yields a harmless [0, 1].
+function domainFor(points) {
+  const prices = points.map((p) => p[1]);
+  const { lo, hi } = niceDomain(Math.min(...prices), Math.max(...prices));
+  return [lo, hi];
+}
+
 function pathFrom(points, w, h, pad = 2, padLeft = pad, domain = null) {
   if (points.length === 0) return { line: "", coords: [] };
   const prices = points.map((p) => p[1]);
@@ -62,7 +70,10 @@ function pathFrom(points, w, h, pad = 2, padLeft = pad, domain = null) {
 }
 
 export function Sparkline({ history, trend, width = 96, height = 28 }) {
-  const { line } = useMemo(() => pathFrom(history || [], width, height), [history, width, height]);
+  const { line } = useMemo(() => {
+    const pts = history || [];
+    return pathFrom(pts, width, height, 2, 2, domainFor(pts));
+  }, [history, width, height]);
   if (!history || history.length < 2) return null;
 
   const color = trend === "up" ? "#e74c3c" : trend === "down" ? "#16a34a" : "#94a3b8";
@@ -90,7 +101,7 @@ export function TrendArea({ history, trend, width = 260, height = 88 }) {
 
   const PAD = 6;
   const { line, coords } = useMemo(
-    () => pathFrom(points, width, height, PAD),
+    () => pathFrom(points, width, height, PAD, PAD, domainFor(points)),
     [points, width, height]
   );
 
