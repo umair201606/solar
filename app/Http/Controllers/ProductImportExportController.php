@@ -198,7 +198,7 @@ class ProductImportExportController extends Controller
                 $newBrands[$brand] = true;
             }
 
-            $price = is_numeric($row['price'] ?? null) ? (float) $row['price'] : null;
+            $price = $this->parseNumber($row['price'] ?? null);
             $priceDate = $this->normalizeDate($row['price_date'] ?? null);
 
             $status = 'new';
@@ -208,7 +208,7 @@ class ProductImportExportController extends Controller
                     'unit' => trim((string) ($row['unit'] ?? '')) ?: null,
                     'warranty' => trim((string) ($row['warranty'] ?? '')) ?: null,
                     'phase' => $this->normalizePhase($row['phase'] ?? null),
-                    'power_kw' => is_numeric($row['power_kw'] ?? null) ? (float) $row['power_kw'] : null,
+                    'power_kw' => $this->parseNumber($row['power_kw'] ?? null),
                 ], $specs);
                 if ($allMatch) {
                     $priceChanged = $price !== null && (float) $existing->price !== $price;
@@ -228,12 +228,12 @@ class ProductImportExportController extends Controller
                     'category' => $category,
                     'brand' => $brand ?: null,
                     'price' => $price,
-                    'internal_price' => is_numeric($row['internal_price'] ?? null) ? (float) $row['internal_price'] : null,
+                    'internal_price' => $this->parseNumber($row['internal_price'] ?? null),
                     'price_date' => $priceDate,
                     'unit' => trim((string) ($row['unit'] ?? '')) ?: null,
                     'warranty' => trim((string) ($row['warranty'] ?? '')) ?: null,
                     'phase' => $this->normalizePhase($row['phase'] ?? null),
-                    'power_kw' => is_numeric($row['power_kw'] ?? null) ? (float) $row['power_kw'] : null,
+                    'power_kw' => $this->parseNumber($row['power_kw'] ?? null),
                     'whatsapp_number' => trim((string) ($row['whatsapp_number'] ?? '')) ?: null,
                     'description' => trim((string) ($row['description'] ?? '')) ?: null,
                     'tagline' => trim((string) ($row['tagline'] ?? '')) ?: null,
@@ -502,6 +502,26 @@ class ProductImportExportController extends Controller
             str_contains($v, 'three') || $v === '3p' || $v === '3-ph' => 'Three Phase',
             default => null,
         };
+    }
+
+    /**
+     * Parse a numeric cell tolerantly: strips thousands separators, spaces and
+     * a leading currency label so formatted values like "300,000.00" or
+     * "Rs 1,225,000" still import as numbers. Returns null when not numeric.
+     */
+    private function parseNumber($value): ?float
+    {
+        if ($value === null) {
+            return null;
+        }
+        $s = trim((string) $value);
+        if ($s === '') {
+            return null;
+        }
+        $s = str_ireplace(['rs.', 'rs', 'pkr', '/-'], '', $s);
+        $s = str_replace([',', ' ', "\u{00A0}"], '', $s);
+
+        return is_numeric($s) ? (float) $s : null;
     }
 
     private function normalizeDate($value): ?string

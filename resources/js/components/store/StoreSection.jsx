@@ -269,6 +269,10 @@ function ProductModal({ product, defaults, onClose }) {
   const description = product.description || defaults.description;
 
   const contact = async (channel) => {
+    // WhatsApp opens a new tab — pre-open it synchronously so mobile browsers
+    // keep the user-activation. A window.open() after `await` is treated as an
+    // unsolicited popup and blocked on mobile Safari/Chrome.
+    const popup = channel === "call" ? null : window.open("", "_blank");
     setContacting(channel);
     try {
       const url = `${window.location.origin}/store?product=${product.slug}`;
@@ -276,9 +280,12 @@ function ProductModal({ product, defaults, onClose }) {
         channel,
         product_url: url,
       });
-      window.open(channel === "call" ? data.tel_url : data.wa_url, "_blank");
+      const target = channel === "call" ? data.tel_url : data.wa_url;
+      if (popup) popup.location.href = target;
+      else window.location.href = target; // call, or popup was blocked
     } catch {
       // still let the visitor reach us even if logging failed
+      if (popup) popup.close();
     } finally {
       setContacting(null);
     }
@@ -866,15 +873,21 @@ export default function StoreSection() {
 
   // Direct WhatsApp / Call from a card — same lead logging as the modal CTAs.
   const contactProduct = async (product, channel) => {
+    // Pre-open the WhatsApp tab synchronously (see ProductModal.contact):
+    // opening it after the await is blocked by mobile popup blockers.
+    const popup = channel === "call" ? null : window.open("", "_blank");
     try {
       const url = `${window.location.origin}/store?product=${product.slug}`;
       const { data } = await axios.post(`/api/store/products/${product.id}/contact-click`, {
         channel,
         product_url: url,
       });
-      window.open(channel === "call" ? data.tel_url : data.wa_url, "_blank");
+      const target = channel === "call" ? data.tel_url : data.wa_url;
+      if (popup) popup.location.href = target;
+      else window.location.href = target; // call, or popup was blocked
     } catch {
       // ignore logging failures — never block the visitor from reaching us
+      if (popup) popup.close();
     }
   };
 
