@@ -25,6 +25,7 @@ jobs:
             npm ci &&
             npm run build:ssr &&
             php artisan migrate --force &&
+            ( grep -q '^VAPID_PUBLIC_KEY=.' .env || php artisan webpush:vapid | grep -E '^VAPID_(PUBLIC|PRIVATE)_KEY=' >> .env ; grep -q '^VAPID_SUBJECT=' .env || echo 'VAPID_SUBJECT=mailto:info@solarkon.com' >> .env ; true ) &&
             php artisan config:cache &&
             php artisan route:cache &&
             sudo systemctl restart nginx &&
