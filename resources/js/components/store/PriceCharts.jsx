@@ -15,24 +15,24 @@ function niceNum(range, round) {
 }
 
 /**
- * A padded, rounded [lo, hi] axis domain + tick step so the line sits inside
- * the plot with breathing room above and below — instead of the min/max data
- * points hugging the very bottom and top edges. Returns nice round bounds.
+ * A padded, rounded [lo, hi] axis domain + tick step, centred on the data.
+ *
+ * The axis spans whichever is larger: a padded view of the real data range, or
+ * a floor proportional to the price level (MIN_SPAN_FRACTION of the mid price).
+ * The floor is the important bit — without it a tiny change (e.g. a 2% price
+ * move) gets stretched to fill the whole chart height and reads as a crash or
+ * spike. With it, a small change stays a small wiggle and only a genuinely
+ * large swing fills the plot.
  */
-function niceDomain(min, max, maxTicks = 4) {
+function niceDomain(min, max, maxTicks = 5) {
   if (!Number.isFinite(min) || !Number.isFinite(max)) return { lo: 0, hi: 1, step: 1 };
-  if (min === max) {
-    // Flat series: build a small window centred on the value.
-    const pad = niceNum((Math.abs(min) || 1) * 0.1, false);
-    return { lo: min - pad, hi: min + pad, step: pad };
-  }
-  const dataRange = max - min;
-  const paddedMin = min - dataRange * 0.4; // more room below → baseline lifts off the floor
-  const paddedMax = max + dataRange * 0.25;
-  const step = niceNum((paddedMax - paddedMin) / (maxTicks - 1), true);
+  const MIN_SPAN_FRACTION = 0.18; // axis spans at least ±9% around the price level
+  const mid = (min + max) / 2;
+  const range = Math.max((max - min) * 1.5, Math.abs(mid) * MIN_SPAN_FRACTION, 1);
+  const step = niceNum(range / (maxTicks - 1), true);
   return {
-    lo: Math.floor(paddedMin / step) * step,
-    hi: Math.ceil(paddedMax / step) * step,
+    lo: Math.floor((mid - range / 2) / step) * step,
+    hi: Math.ceil((mid + range / 2) / step) * step,
     step,
   };
 }
